@@ -11,4 +11,4 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 }
-//testcommand von Flo
+//testcommand von Flo..
