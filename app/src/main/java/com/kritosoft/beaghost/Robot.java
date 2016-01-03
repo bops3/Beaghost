@@ -17,26 +17,27 @@ public class Robot implements Drawable {
     }
 
     private float x, y, dir;
+    private GameManager gm;
 
-    public Robot(float x, float y, float dir) {
+    public Robot(float x, float y, float dir, GameManager gm) {
         this.x = x;
         this.y = y;
         this.dir = dir;
     }
 
-    public static Robot createFromFile(String line) {
+    public static Robot createFromFile(String line, GameManager gm) {
 
         Scanner sc = new Scanner(line).useDelimiter(GameManager.DELIM);
         float x, y, dir;
         x = Float.parseFloat(sc.next());
         y = Float.parseFloat(sc.next());
         dir = Float.parseFloat(sc.next());
-        return new Robot(x, y, dir);
+        return new Robot(x, y, dir, gm);
     }
 
     @Override
     public void draw(Canvas c) {
-        c.drawCircle(x, y, SIZE, paint);
+        c.drawCircle(x - gm.getMapSizeX(), y - gm.getMapSizeY(), SIZE, paint);
     }
 }
 

@@ -16,16 +16,18 @@ public class Obstacle implements Drawable {
         paint.setColor(0x000000ff);
     }
 
+    private GameManager gm;
     private float x, y, width, height;
 
-    public Obstacle(float x, float y, float width, float height) {
+    public Obstacle(float x, float y, float width, float height, GameManager gm) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        this.gm = gm;
     }
 
-    public static Obstacle createFromFile(String line) {
+    public static Obstacle createFromFile(String line, GameManager gm) {
 
         Scanner sc = new Scanner(line).useDelimiter(GameManager.DELIM);
         float x, y, width, height;
@@ -33,11 +35,11 @@ public class Obstacle implements Drawable {
         y = Float.parseFloat(sc.next());
         width = Float.parseFloat(sc.next());
         height = Float.parseFloat(sc.next());
-        return new Obstacle(x, y, width, height);
+        return new Obstacle(x, y, width, height, gm);
     }
 
     @Override
     public void draw(Canvas c) {
-        c.drawRect(x, y, width, height, paint);
+        c.drawRect(x - gm.getMapSizeX(), y - gm.getMapSizeY(), width, height, paint);
     }
 }

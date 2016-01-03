@@ -18,7 +18,7 @@ public class GameManager {
     private Obstacle[] obstacles;
     private Stack<Robot> robots;
     private Context contex;
-    private int mapSizeX, mapSizeY;
+    private int mapSizeX, mapSizeY, zoomVersatzX, zoomVerstatzY;
 
     public GameManager(Context contex) {
         this.contex = contex;
@@ -41,15 +41,31 @@ public class GameManager {
             byte type = Byte.parseByte(reader.next());
             switch (type) {
                 case TYPE_OBSTACLE:
-                    obstacles[i] = Obstacle.createFromFile(reader.nextLine());
+                    obstacles[i] = Obstacle.createFromFile(reader.nextLine(), this);
                     i++;
                     break;
                 case TYPE_ROBOT:
-                    robots.add(Robot.createFromFile(reader.nextLine()));
+                    robots.add(Robot.createFromFile(reader.nextLine(), this));
                     break;
                 default:
                     Log.e("GameManager", "Unknown Type: " + type);
             }
         }
+    }
+
+    public int getZoomVersatzX() {
+        return zoomVersatzX;
+    }
+
+    public int getZoomVerstatzY() {
+        return zoomVerstatzY;
+    }
+
+    public int getMapSizeX() {
+        return mapSizeX;
+    }
+
+    public int getMapSizeY() {
+        return mapSizeY;
     }
 }
