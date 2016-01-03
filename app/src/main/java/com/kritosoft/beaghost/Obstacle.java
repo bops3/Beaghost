@@ -10,7 +10,6 @@ import java.util.Scanner;
  */
 public class Obstacle implements Drawable {
 
-    public static final String DELIM_OS = " ";
     public static final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     static {
@@ -28,7 +27,7 @@ public class Obstacle implements Drawable {
 
     public static Obstacle createFromFile(String line) {
 
-        Scanner sc = new Scanner(line).useDelimiter(DELIM_OS);
+        Scanner sc = new Scanner(line).useDelimiter(GameManager.DELIM);
         float x, y, width, height;
         x = Float.parseFloat(sc.next());
         y = Float.parseFloat(sc.next());
