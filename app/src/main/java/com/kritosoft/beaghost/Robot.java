@@ -23,6 +23,7 @@ public class Robot implements Drawable {
         this.x = x;
         this.y = y;
         this.dir = dir;
+        this.gm = gm;
     }
 
     public static Robot createFromFile(String line, GameManager gm) {
