@@ -63,7 +63,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         float x = event.getX();
         float y = event.getY();
 
-        e.getPointerId(0);
+//        e.getPointerId(0);
 //        Log.v("PointerCount: ", "" + e.getPointerCount());
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
 
@@ -159,19 +159,6 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         public Canvas drawCanvas(@NonNull Canvas c) {
             c.drawColor(col_b);
             c.scale(mScaleFactor, mScaleFactor);
-
-            if ((deltaX * -1) < 0) {
-                deltaX = 0;
-            } else if ((deltaX * -1) > (mScaleFactor - 1) * displayWidth) {
-                deltaX = (1 - mScaleFactor) * displayWidth;
-            }
-
-            if (deltaY * -1 < 0) {
-                deltaY = 0;
-            } else if ((deltaY * -1) > (mScaleFactor - 1) * displayHeight) {
-                deltaY = (1 - mScaleFactor) * displayHeight;
-            }
-
             c.translate(deltaX / mScaleFactor, deltaY / mScaleFactor);
             synchronized (this) {
                 for (Obstacle o : obstacles) {
