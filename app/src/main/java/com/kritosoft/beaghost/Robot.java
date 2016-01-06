@@ -26,7 +26,7 @@ public class Robot implements Drawable {
     private float dirChangeRadiantsPerSec = 1f;
     private long nextDirChangeDelayMillis = 1000;
     //##############
-    private float pixChangePerSec = 80;
+    private float pixChangePerSec = 300;
     private float x, y, dir;
     private float drawX, drawY, scale, pointerX, pointerY;
     private float dirSin, dirCos;
