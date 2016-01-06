@@ -131,8 +131,8 @@ public class GameManager {
     }
 
     public Canvas drawCanvas(@NonNull Canvas c) {
-        c.scale(scale, scale);
         c.translate(offsetX, offsetY);
+        c.scale(scale, scale);
         Log.v("GameManager", "offset:" + offsetX + "," + offsetY);
 
         c.drawColor(col_b);
