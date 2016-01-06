@@ -11,7 +11,7 @@ import java.util.Stack;
  * Created by Florian on 02.01.2016.
  */
 public class GameManager {
-// sinnloser kommentar
+// sinnloser kommentar von Floooo
     public static final byte TYPE_OBSTACLE = 0, TYPE_ROBOT = 1;
     public static final String DELIM = " ";
 
