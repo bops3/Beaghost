@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -19,6 +20,7 @@ import java.util.Stack;
 public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callback {
     //...
     //private static final float LIFETIME = 60 * 10;
+    private Context context;
     private Paint aktCol;
     private DrawThread dt;
     private SurfaceHolder sh;
@@ -29,14 +31,20 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
     private float mLastTouchX, mLastTouchY, mPosX, mPosY;
     private int mActivePointerId;
 
-    public CustomDrawView(Context contex) {
-        super(contex);
+    private ScaleGestureDetector mScaleDetector;
+    private float mScaleFactor = 1.f;
+
+    public CustomDrawView(Context context) {
+        super(context);
+        this.context = context;
     }
 
     public void init(GameManager gm, Obstacle[] obs, Stack<Robot> robs) {
         this.gm = gm;
         obstacles = obs;
         robots = robs;
+        mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
+        gm.setScale(mScaleFactor);
         sh = getHolder();
         sh.addCallback(this);
         dt = new DrawThread(sh);
@@ -48,6 +56,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
     public boolean onTouchEvent(MotionEvent e) {
         float x = e.getX();
         float y = e.getY();
+
         e.getPointerId(0);
 //        Log.v("PointerCount: ", "" + e.getPointerCount());
         if (e.getPointerCount() == 1)
@@ -64,7 +73,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
 //                    return true;
 //                case MotionEvent.ACTION_UP:
 //                    //Do nothing
-//                    return true;
+//                    return false;
 
                 case MotionEvent.ACTION_DOWN:
 
@@ -78,39 +87,40 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
                     mLastTouchY = y2;
                     // Save the ID of this pointer (for dragging)
                     mActivePointerId = MotionEventCompat.getPointerId(e, 0);
-                    break;
+                    return true;
                 }
 
                 case MotionEvent.ACTION_MOVE: {
                     // Find the index of the active pointer and fetch its position
-                    final int pointerIndex =
-                            MotionEventCompat.findPointerIndex(e, mActivePointerId);
+                    try {
+                        final int pointerIndex =
+                                MotionEventCompat.findPointerIndex(e, mActivePointerId);
 
-                    final float x2 = MotionEventCompat.getX(e, pointerIndex);
-                    final float y2 = MotionEventCompat.getY(e, pointerIndex);
+                        final float x2 = MotionEventCompat.getX(e, pointerIndex);
+                        final float y2 = MotionEventCompat.getY(e, pointerIndex);
 
-                    // Calculate the distance moved
-                    final float dx = x2 - mLastTouchX;
-                    final float dy = y2 - mLastTouchY;
+                        // Calculate the distance moved
+                        final float dx = x2 - mLastTouchX;
+                        final float dy = y2 - mLastTouchY;
+                        gm.setOffsetX(dx);
+                        gm.setOffsetY(dy);
 
-                    gm.setOffsetX(dx);
-                    gm.setOffsetY(dy);
+                        mPosX += dx;
+                        mPosY += dy;
 
-                    mPosX += dx;
-                    mPosY += dy;
+                        // Remember this touch position for the next move event
+                        mLastTouchX = x2;
+                        mLastTouchY = y2;
+                    } catch (Exception ex) {
+                        Log.d("GameManager", "Exception in onTouch()");
+                    }
 
-                    invalidate();
-
-                    // Remember this touch position for the next move event
-                    mLastTouchX = x2;
-                    mLastTouchY = y2;
-
-                    break;
+                    return true;
                 }
             }
 
         else if (e.getPointerCount() == 2) {
-            //TODO zoom
+            mScaleDetector.onTouchEvent(e);
         }
         return false;
     }
@@ -167,7 +177,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
                     sho.unlockCanvasAndPost(drawCanvas(c));
 
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(16);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     interrupt();
@@ -188,6 +198,19 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
                 //draw here
             }
             return c;
+        }
+    }
+
+    private class ScaleListener
+            extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            mScaleFactor *= detector.getScaleFactor();
+
+            // Don't let the object get too small or too large.
+            mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
+            gm.setScale(mScaleFactor);
+            return true;
         }
     }
 

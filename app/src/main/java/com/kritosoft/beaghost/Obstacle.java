@@ -18,7 +18,7 @@ public class Obstacle implements Drawable {
     }
 
     private GameManager gm;
-    private float x, y, width, height;
+    private float x, y, width, height, drawX, drawY, scale;
 
     public Obstacle(float x, float y, float width, float height, GameManager gm) {
         this.x = x;
@@ -42,8 +42,9 @@ public class Obstacle implements Drawable {
 
     @Override
     public void draw(Canvas c) {
-        float drawX = x + gm.getOffsetX();
-        float drawY = y + gm.getOffsetY();
-        c.drawRect(drawX, drawY, drawX + width, drawY + height, paint);
+        drawX = (x + gm.getOffsetX()) * scale;
+        drawY = (y + gm.getOffsetY()) * scale;
+        scale = gm.getScale();
+        c.drawRect(drawX, drawY, drawX + width * scale, drawY + height * scale, paint);
     }
 }

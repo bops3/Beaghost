@@ -16,7 +16,7 @@ public class Robot implements Drawable {
         paint.setColor(0xff0000ff);
     }
 
-    private float x, y, dir;
+    private float x, y, dir, drawX, drawY, scale;
     private GameManager gm;
 
     public Robot(float x, float y, float dir, GameManager gm) {
@@ -38,9 +38,10 @@ public class Robot implements Drawable {
 
     @Override
     public void draw(Canvas c) {
-        float drawX = x + gm.getOffsetX();
-        float drawY = y + gm.getOffsetY();
-        c.drawCircle(drawX, drawY, SIZE, paint);
+        drawX = (x + gm.getOffsetX())*scale;
+        drawY = (y + gm.getOffsetY())*scale;
+        scale = gm.getScale();
+        c.drawCircle(drawX, drawY, SIZE * scale, paint);
     }
 }
 
