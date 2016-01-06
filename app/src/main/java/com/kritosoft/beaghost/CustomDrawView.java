@@ -102,7 +102,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
 
         Canvas c;
         SurfaceHolder sho;
-        int col_b = Color.WHITE;
+        int col_b = Color.GREEN;
 
         public DrawThread(SurfaceHolder sho) {
             this.sho = sho;
@@ -129,6 +129,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         }
 
         public Canvas drawCanvas(@NonNull Canvas c) {
+            c.drawColor(col_b);
             synchronized (this) {
                 for (Obstacle o : obstacles) {
                     o.draw(c);

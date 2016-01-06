@@ -40,6 +40,6 @@ public class Obstacle implements Drawable {
 
     @Override
     public void draw(Canvas c) {
-        c.drawRect(x - gm.getMapSizeX(), y - gm.getMapSizeY(), width, height, paint);
+        c.drawRect(x - gm.getOffsetX(), y - gm.getOffsetY(), width, height, paint);
     }
 }
