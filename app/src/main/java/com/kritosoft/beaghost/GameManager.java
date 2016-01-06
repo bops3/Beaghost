@@ -15,7 +15,7 @@ public class GameManager {
 // sinnloser kommentar von Floooo
     public static final byte TYPE_OBSTACLE = 0, TYPE_ROBOT = 1;
     public static final String DELIM = " ";
-    public static final int drawDelayMillis = 16, tickDelayMillis = 16;
+    public static final int drawTPS = 60, tickTPS = 60;
     private Clock drawClock, tickClock;
 
     private Obstacle[] obstacles;
@@ -31,13 +31,13 @@ public class GameManager {
         genMapFromFile(R.raw.map1);
         cdv = new CustomDrawView(context);
         cdv.init(this, obstacles, robots);
-        drawClock = new Clock(drawDelayMillis, new Tickable() {
+        drawClock = new Clock(drawTPS, new Tickable() {
             @Override
             public void tick(int millisDelta) {
                 cdv.redraw();
             }
         });
-        tickClock = new Clock(tickDelayMillis, new Tickable() {
+        tickClock = new Clock(tickTPS, new Tickable() {
             @Override
             public void tick(int millisDelta) {
                 tickAll(millisDelta);
