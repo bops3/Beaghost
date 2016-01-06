@@ -16,7 +16,7 @@ import java.util.Stack;
  * Created by Florian on 03.01.2016.
  */
 public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callback {
-//moin
+//moin NE!
     //private static final float LIFETIME = 60 * 10;
     private Paint aktCol;
     private DrawThread dt;
@@ -119,7 +119,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
                     sho.unlockCanvasAndPost(drawCanvas(c));
 
                 try {
-                    Thread.sleep(16);
+                    Thread.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     interrupt();
