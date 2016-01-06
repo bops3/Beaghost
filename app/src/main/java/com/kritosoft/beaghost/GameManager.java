@@ -17,20 +17,20 @@ public class GameManager {
 
     private Obstacle[] obstacles;
     private Stack<Robot> robots = new Stack<>();
-    private Context contex;
+    private Context context;
     private CustomDrawView cdv;
     private int mapSizeX, mapSizeY, offsetX, offsetY;
 
-    public GameManager(Context contex) {
-        this.contex = contex;
+    public GameManager(Context context) {
+        this.context = context;
         genMapFromFile(R.raw.map1);
-        cdv = new CustomDrawView(contex);
-        cdv.init(this,obstacles,robots);
+        cdv = new CustomDrawView(context);
+        cdv.init(this, obstacles, robots);
     }
 
     private void genMapFromFile(int mapId) {
 
-        InputStreamReader isr = new InputStreamReader(contex.getResources().openRawResource(mapId));
+        InputStreamReader isr = new InputStreamReader(context.getResources().openRawResource(mapId));
         Scanner reader = new Scanner(isr);
         int anzObstacles, i = 0;
 
