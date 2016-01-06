@@ -36,13 +36,15 @@ public class Obstacle implements Drawable {
         y = Float.parseFloat(sc.next());
         width = Float.parseFloat(sc.next());
         height = Float.parseFloat(sc.next());
-        Log.d("Obstacle","Obstacle erstellt: "+x+", "+y+" | "+width+", "+height);
+        Log.d("Obstacle", "Obstacle erstellt: " + x + ", " + y + " | " + width + ", " + height);
         return new Obstacle(x, y, width, height, gm);
     }
 
     @Override
     public void draw(Canvas c) {
-        Log.v("Obstacle", "drawing obstacle" +( x - gm.getOffsetX())+", "+(y - gm.getOffsetY()));
-        c.drawRect(x - gm.getOffsetX(), y - gm.getOffsetY(), width, height, paint);
+        Log.v("Obstacle", "drawing obstacle" + (x - gm.getOffsetX()) + ", " + (y - gm.getOffsetY()));
+        float drawX = x - gm.getOffsetX();
+        float drawY = y - gm.getOffsetY();
+        c.drawRect(drawX, drawY, drawX + width, drawY + height, paint);
     }
 }
