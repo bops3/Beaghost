@@ -65,18 +65,19 @@ public class Robot implements Drawable {
 //        pointerY = (y + SIZE * 3 * dirSin + gm.getOffsetY()) * scale;
 //
 //        c.drawLine(drawX, drawY, pointerX, pointerY, pointerPaint);
-//        Log.v("Robot","draw");
+        Log.v("Robot", "draw");
         c.drawCircle(x, y, SIZE, bodyPaint);
     }
 
     public void tick(long delayMillis) {
-//        Log.v("Robot","tick");
+        Log.v("Robot", "tick");
 
         millisToNextDirChange = System.nanoTime() - lastDirChangeMillis;
         // Richtungsänderung ändern?
         if (millisToNextDirChange < 1) {
             lastDirChangeMillis = System.nanoTime();
             millisToNextDirChange = 500 + (long) (Math.random() * 1000);
+
             // change direction
             dirChangeRadiantsPerSec *= -1;
             if (Math.random() < 0.333d) {
@@ -87,16 +88,17 @@ public class Robot implements Drawable {
                     dirChangeRadiantsPerSec *= -1;
             }
         }
+        float framerate = 1000 / delayMillis;
         // wenn änderung nötig, dann ändern
         if (dirChangeRadiantsPerSec != 0) {
-            dir += dirChangeRadiantsPerSec / (1000 / delayMillis);
+            dir += dirChangeRadiantsPerSec / framerate;
             dir %= 2f * Math.PI;
             dirSin = (float) Math.sin(dir);
             dirCos = (float) Math.cos(dir);
         }
         // bewegen
-        x += pixChangePerSec * dirCos;
-        x += pixChangePerSec * dirSin;
+        x += (pixChangePerSec / framerate) * dirCos;
+        y += (pixChangePerSec / framerate) * dirSin;
     }
 }
 
