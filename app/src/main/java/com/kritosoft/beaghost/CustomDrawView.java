@@ -17,7 +17,7 @@ import java.util.Stack;
  * Created by Florian on 03.01.2016.
  */
 public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callback {
-//...
+    //...
     //private static final float LIFETIME = 60 * 10;
     private Paint aktCol;
     private DrawThread dt;
@@ -26,15 +26,14 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
     private Obstacle[] obstacles;
     private Stack<Robot> robots;
     private float deltaX, deltaY;
-
-
-    float mLastTouchX,mLastTouchY;
+    private float mLastTouchX, mLastTouchY, mPosX, mPosY;
+    private int mActivePointerId;
 
     public CustomDrawView(Context contex) {
         super(contex);
     }
 
-    public void init(GameManager gm, Obstacle[] obs, Stack<Robot> robs){
+    public void init(GameManager gm, Obstacle[] obs, Stack<Robot> robs) {
         this.gm = gm;
         obstacles = obs;
         robots = robs;
@@ -70,25 +69,25 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
                 case MotionEvent.ACTION_DOWN:
 
                 {
-                    final int pointerIndex = MotionEventCompat.getActionIndex(ev);
-                    final float x = MotionEventCompat.getX(ev, pointerIndex);
-                    final float y = MotionEventCompat.getY(ev, pointerIndex);
+                    final int pointerIndex = MotionEventCompat.getActionIndex(e);
+                    final float x2 = MotionEventCompat.getX(e, pointerIndex);
+                    final float y2 = MotionEventCompat.getY(e, pointerIndex);
 
                     // Remember where we started (for dragging)
-                    mLastTouchX = x;
-                    mLastTouchY = y;
+                    mLastTouchX = x2;
+                    mLastTouchY = y2;
                     // Save the ID of this pointer (for dragging)
-                    mActivePointerId = MotionEventCompat.getPointerId(ev, 0);
+                    mActivePointerId = MotionEventCompat.getPointerId(e, 0);
                     break;
                 }
 
                 case MotionEvent.ACTION_MOVE: {
                     // Find the index of the active pointer and fetch its position
                     final int pointerIndex =
-                            MotionEventCompat.findPointerIndex(ev, mActivePointerId);
+                            MotionEventCompat.findPointerIndex(e, mActivePointerId);
 
-                    final float x2 = MotionEventCompat.getX(ev, pointerIndex);
-                    final float y2 = MotionEventCompat.getY(ev, pointerIndex);
+                    final float x2 = MotionEventCompat.getX(e, pointerIndex);
+                    final float y2 = MotionEventCompat.getY(e, pointerIndex);
 
                     // Calculate the distance moved
                     final float dx = x2 - mLastTouchX;
@@ -104,6 +103,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
                     mLastTouchY = y2;
 
                     break;
+                }
             }
 
         else if (e.getPointerCount() == 2) {
