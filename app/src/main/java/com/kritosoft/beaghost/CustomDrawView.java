@@ -16,7 +16,7 @@ import java.util.Stack;
  * Created by Florian on 03.01.2016.
  */
 public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callback {
-
+//moin
     //private static final float LIFETIME = 60 * 10;
     private Paint aktCol;
     private DrawThread dt;
