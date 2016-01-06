@@ -20,6 +20,7 @@ public class GameManager {
     private Context context;
     private CustomDrawView cdv;
     private int mapSizeX, mapSizeY, offsetX, offsetY;
+    private float scale;
 
     public GameManager(Context context) {
         this.context = context;
@@ -65,6 +66,14 @@ public class GameManager {
 
     public void setOffsetX(float change) {
         offsetX += change;
+    }
+
+    public float getScale() {
+        return scale;
+    }
+
+    public void setScale(float scale) {
+        this.scale = scale;
     }
 
     public int getOffsetY() {
