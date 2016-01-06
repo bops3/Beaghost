@@ -25,7 +25,6 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
     //private static final float LIFETIME = 60 * 10;
     private Context context;
     private Paint aktCol;
-    private DrawThread dt;
     private SurfaceHolder sh;
     private GameManager gm;
     private Obstacle[] obstacles;
@@ -53,8 +52,6 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         gm.setScale(mScaleFactor);
         sh = getHolder();
         sh.addCallback(this);
-        dt = new DrawThread(sh);
-        dt.start();
     }
 
 
@@ -126,51 +123,10 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
     }
 
 
-    public class DrawThread extends Thread {
-
-        Canvas c;
-        SurfaceHolder sho;
-        int col_b = Color.GREEN;
-
-        public DrawThread(SurfaceHolder sho) {
-            this.sho = sho;
-
-        }
-
-        @Override
-        public void run() {
-
-            while (!this.isInterrupted()) {
-
-                c = sho.lockCanvas();
-                if (c != null)
-                    sho.unlockCanvasAndPost(drawCanvas(c));
-
-                try {
-                    Thread.sleep(16);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    interrupt();
-                }
-            }
-
-        }
-
-        public Canvas drawCanvas(@NonNull Canvas c) {
-            c.drawColor(col_b);
-            c.scale(mScaleFactor, mScaleFactor);
-            c.translate(deltaX / mScaleFactor, deltaY / mScaleFactor);
-            synchronized (this) {
-                for (Obstacle o : obstacles) {
-                    o.draw(c);
-                }
-                for (Robot r : robots) {
-                    r.draw(c);
-                }
-                //draw here
-            }
-            return c;
-        }
+    public void redraw() {
+        Canvas c = sh.lockCanvas();
+        if (c != null)
+            sh.unlockCanvasAndPost(gm.drawCanvas(c));
     }
 
     private class ScaleListener
