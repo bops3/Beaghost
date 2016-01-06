@@ -71,6 +71,8 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
 
                 gm.setOffsetX(x - deltaX);
                 gm.setOffsetY(y - deltaY);
+                deltaX =x;
+                deltaY = y;
                 break;
 
         }
