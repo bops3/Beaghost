@@ -19,7 +19,7 @@ public class Robot implements Drawable {
     // nano values for time measuring
     private long nanosToNextDirChange = 0, lastDirChangeNanos;
     // movement parameters!#############
-    private float dirChangeRadiantsPerSec = (float) Math.PI / 4;
+    private float dirChangeRadiantsPerSec = 1f;
     //##############
     private float pixChangePerSec = 20;
     private float x, y, dir;
@@ -55,18 +55,28 @@ public class Robot implements Drawable {
 
     public void tick(long delayNanos) {
         nanosToNextDirChange = System.nanoTime() - lastDirChangeNanos;
+        // Richtungsänderung ändern?
         if (nanosToNextDirChange < 1) {
+            lastDirChangeNanos = System.nanoTime();
             nanosToNextDirChange = 500000 + (long) (Math.random() * 1000000);
             // change direction
-            dirChangeRadiantsPerSec *= -1; // TODO vllt noch ändern, vllt auch mal null?
+            dirChangeRadiantsPerSec *= -1;
+            if (Math.random() < 0.333d) {
+                dirChangeRadiantsPerSec = 0;
+            } else {
+                dirChangeRadiantsPerSec = (0.5f + (float) Math.random() * 0.5f);
+                if (Math.random() < 0.5f)
+                    dirChangeRadiantsPerSec *= -1;
+            }
         }
+        // wenn änderung nötig, dann ändern
         if (dirChangeRadiantsPerSec != 0) {
             dir += dirChangeRadiantsPerSec / (1000000 / delayNanos);
+            dir %= 2f * Math.PI;
             dirSin = (float) Math.sin(dir);
             dirCos = (float) Math.cos(dir);
         }
-        dir %= 2f * Math.PI;
-
+        // bewegen
         x += pixChangePerSec * dirCos;
         x += pixChangePerSec * dirSin;
     }
