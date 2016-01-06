@@ -114,8 +114,10 @@ public class GameManager {
         return cdv;
     }
 
-    private void tickAll(long delayNanos) {
-
+    private void tickAll(long delayMillis) {
+        for (Robot r : robots) {
+            r.tick(delayMillis);
+        }
     }
 
     public void startTicking() {
