@@ -2,6 +2,7 @@ package com.kritosoft.beaghost;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.Log;
 
 import java.util.Scanner;
 
@@ -35,11 +36,13 @@ public class Obstacle implements Drawable {
         y = Float.parseFloat(sc.next());
         width = Float.parseFloat(sc.next());
         height = Float.parseFloat(sc.next());
+        Log.d("Obstacle","Obstacle erstellt: "+x+", "+y+" | "+width+", "+height);
         return new Obstacle(x, y, width, height, gm);
     }
 
     @Override
     public void draw(Canvas c) {
+        Log.v("Obstacle", "drawing obstacle" +( x - gm.getOffsetX())+", "+(y - gm.getOffsetY()));
         c.drawRect(x - gm.getOffsetX(), y - gm.getOffsetY(), width, height, paint);
     }
 }

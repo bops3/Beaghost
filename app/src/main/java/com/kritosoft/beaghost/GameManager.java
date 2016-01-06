@@ -37,13 +37,7 @@ public class GameManager {
         mapSizeX = Integer.parseInt(reader.next());
         mapSizeY = Integer.parseInt(reader.next());
         Log.d("GameManager", "Map size: " + mapSizeX + ", " + mapSizeY);
-        Log.d("GameManager", "test..");
         String anzOStr = reader.next().trim();
-        for (int ii = 0; ii < anzOStr.length(); ii++) {
-            char c = anzOStr.charAt(ii);
-            Log.d("GameManager", "char " + ii + " :" + c + ", " + ((byte) c));
-        }
-        Log.d("GameManager", "antOStr:" + anzOStr);
         anzObstacles = Integer.parseInt(anzOStr);
 
         obstacles = new Obstacle[anzObstacles];
