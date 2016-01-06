@@ -9,8 +9,6 @@ import android.view.ScaleGestureDetector;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import java.util.Stack;
-
 /**
  * Created by Florian on 03.01.2016.
  */
@@ -51,7 +49,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
 
 //        e.getPointerId(0);
 //        Log.v("PointerCount: ", "" + event.getPointerCount());
-        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+        switch (event.getAction()) {
 
             case MotionEvent.ACTION_DOWN:
                 mode = DRAG;
@@ -68,10 +66,10 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
                 mode = DRAG;
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.d("CustomDrawView","ACTION_MOVE");
+//                Log.d("CustomDrawView", "ACTION_MOVE");
                 gm.setOffsetX(x - deltaX);
                 gm.setOffsetY(y - deltaY);
-                deltaX =x;
+                deltaX = x;
                 deltaY = y;
                 break;
 
@@ -79,7 +77,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
 
         mScaleDetector.onTouchEvent(event);
 
-        return false;
+        return true;
     }
 
 
@@ -106,7 +104,6 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
     }
 
 
-
     public void redraw() {
         Canvas c = sh.lockCanvas();
         if (c != null) {
@@ -122,6 +119,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
 
             // Don't let the object get too small or too large.
             mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
+            Log.v("CustomDrawView", "scale: " + mScaleFactor);
             gm.setScale(mScaleFactor);
             return true;
         }
