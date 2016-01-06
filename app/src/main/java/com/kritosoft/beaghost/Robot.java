@@ -16,7 +16,14 @@ public class Robot implements Drawable {
         paint.setColor(0xff0000ff);
     }
 
+    // nano values for time measuring
+    private long nanosToNextDirChange = 0, lastDirChangeNanos;
+    // movement parameters!#############
+    private float dirChangeRadiantsPerSec = (float) Math.PI / 4;
+    //##############
+    private float pixChangePerSec = 20;
     private float x, y, dir;
+    private float dirSin, dirCos;
     private GameManager gm;
 
     public Robot(float x, float y, float dir, GameManager gm) {
@@ -41,6 +48,24 @@ public class Robot implements Drawable {
         float drawX = x + gm.getOffsetX();
         float drawY = y + gm.getOffsetY();
         c.drawCircle(drawX, drawY, SIZE, paint);
+    }
+
+    public void tick(long delayNanos) {
+        nanosToNextDirChange = System.nanoTime() - lastDirChangeNanos;
+        if (nanosToNextDirChange < 1) {
+            nanosToNextDirChange = 500000 + (long) (Math.random() * 1000000);
+            // change direction
+            dirChangeRadiantsPerSec *= -1; // TODO vllt noch ändern, vllt auch mal null?
+        }
+        if (dirChangeRadiantsPerSec != 0) {
+            dir += dirChangeRadiantsPerSec / (1000000 / delayNanos);
+            dirSin = (float) Math.sin(dir);
+            dirCos = (float) Math.cos(dir);
+        }
+        dir %= 2f * Math.PI;
+
+        x += pixChangePerSec * dirCos;
+        x += pixChangePerSec * dirSin;
     }
 }
 
