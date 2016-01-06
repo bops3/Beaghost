@@ -16,6 +16,8 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
     private static final int NONE = 0, DRAG = 1, ZOOM = 2;
     private int mode = 0;
     private boolean dragged = true;
+    private boolean nonPrimPointerRelaesed = false;
+
 
     //...
     //private static final float LIFETIME = 60 * 10;
@@ -61,16 +63,22 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
                 break;
             case MotionEvent.ACTION_UP:
                 mode = NONE;
+                if (nonPrimPointerRelaesed)
+                    nonPrimPointerRelaesed = false;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 mode = DRAG;
+                nonPrimPointerRelaesed = true;
                 break;
             case MotionEvent.ACTION_MOVE:
 //                Log.d("CustomDrawView", "ACTION_MOVE");
-                gm.setOffsetX(x - deltaX);
-                gm.setOffsetY(y - deltaY);
+                if (!nonPrimPointerRelaesed) {
+                    gm.setOffsetX(x - deltaX);
+                    gm.setOffsetY(y - deltaY);
+                }
                 deltaX = x;
                 deltaY = y;
+
                 break;
 
         }
