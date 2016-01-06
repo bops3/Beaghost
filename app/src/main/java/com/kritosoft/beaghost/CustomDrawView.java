@@ -85,6 +85,8 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
 
     }
 
+    // stupid comment TODO
+
     public void setGameManager(GameManager gameManager) {
         gm = gameManager;
     }
