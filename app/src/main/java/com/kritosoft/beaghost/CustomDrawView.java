@@ -51,7 +51,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
 
 //        e.getPointerId(0);
 //        Log.v("PointerCount: ", "" + event.getPointerCount());
-        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+        switch (event.getAction()) {
 
             case MotionEvent.ACTION_DOWN:
                 mode = DRAG;
