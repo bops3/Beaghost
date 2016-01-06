@@ -85,7 +85,7 @@ public class Robot implements Drawable {
             if (Math.random() < 0.333d) {
                 dirChangeRadiantsPerSec = 0;
             } else {
-                dirChangeRadiantsPerSec = (0.5f + (float) Math.random() * 0.5f);
+                dirChangeRadiantsPerSec = (1f + (float) Math.random());
                 if (Math.random() < 0.5f)
                     dirChangeRadiantsPerSec *= -1;
             }
