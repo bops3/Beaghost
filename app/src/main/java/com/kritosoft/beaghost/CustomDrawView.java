@@ -50,7 +50,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         float y = event.getY();
 
 //        e.getPointerId(0);
-//        Log.v("PointerCount: ", "" + e.getPointerCount());
+        Log.v("PointerCount: ", "" + event.getPointerCount());
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
 
             case MotionEvent.ACTION_DOWN:

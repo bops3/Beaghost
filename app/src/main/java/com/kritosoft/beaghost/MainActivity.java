@@ -22,9 +22,9 @@ public class MainActivity extends AppCompatActivity {
         gm.startTicking();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        gm.stopTicking();
-    }
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        gm.stopTicking();
+//    }
 }

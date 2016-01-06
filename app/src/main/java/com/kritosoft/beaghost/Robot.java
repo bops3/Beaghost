@@ -2,6 +2,7 @@ package com.kritosoft.beaghost;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.Log;
 
 import java.util.Scanner;
 
@@ -64,10 +65,13 @@ public class Robot implements Drawable {
 //        pointerY = (y + SIZE * 3 * dirSin + gm.getOffsetY()) * scale;
 //
 //        c.drawLine(drawX, drawY, pointerX, pointerY, pointerPaint);
+        Log.d("Robot","draw");
         c.drawCircle(x, y, SIZE, bodyPaint);
     }
 
     public void tick(long delayMillis) {
+        Log.d("Robot","tick");
+
         millisToNextDirChange = System.nanoTime() - lastDirChangeMillis;
         // Richtungsänderung ändern?
         if (millisToNextDirChange < 1) {
