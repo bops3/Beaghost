@@ -50,7 +50,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         float y = event.getY();
 
 //        e.getPointerId(0);
-        Log.v("PointerCount: ", "" + event.getPointerCount());
+//        Log.v("PointerCount: ", "" + event.getPointerCount());
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
 
             case MotionEvent.ACTION_DOWN:
@@ -68,7 +68,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
                 mode = DRAG;
                 break;
             case MotionEvent.ACTION_MOVE:
-
+                Log.d("CustomDrawView","ACTION_MOVE");
                 gm.setOffsetX(x - deltaX);
                 gm.setOffsetY(y - deltaY);
                 deltaX =x;
