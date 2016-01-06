@@ -30,8 +30,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         super(contex);
     }
 
-    public CustomDrawView(Context context, GameManager gm, Obstacle[] obs, Stack<Robot> robs) {
-        super(context);
+    public void init(GameManager gm, Obstacle[] obs, Stack<Robot> robs){
         this.gm = gm;
         obstacles = obs;
         robots = robs;
@@ -39,7 +38,6 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         sh.addCallback(this);
         dt = new DrawThread(sh);
         dt.start();
-
     }
 
 
@@ -56,8 +54,8 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
                     deltaY = y;
                     return true;
                 case MotionEvent.ACTION_MOVE:
-                    gm.setZoomVersatzX(x - deltaX);
-                    gm.setZoomVersatzY(y - deltaY);
+                    gm.setOffsetX(x - deltaX);
+                    gm.setOffsetY(y - deltaY);
                     deltaX = x;
                     deltaY = y;
                     return true;
