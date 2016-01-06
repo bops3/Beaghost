@@ -76,7 +76,7 @@ public class Robot implements Drawable {
         millisFromLastDirChange = System.currentTimeMillis() - lastDirChangeMillis;
         // Richtungsänderung ändern?
         if (millisFromLastDirChange > nextDirChangeDelayMillis) {
-            lastDirChangeMillis = System.nanoTime();
+            lastDirChangeMillis = System.currentTimeMillis();
             millisFromLastDirChange = 0;
             nextDirChangeDelayMillis = 500 + (long) (Math.random() * 1000);
 
