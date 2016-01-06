@@ -9,11 +9,14 @@ import java.util.Scanner;
  * Created by Florian on 02.01.2016.
  */
 public class Robot implements Drawable {
-    public static final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    public static final Paint bodyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    public static final Paint pointerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
     public static final float SIZE = 20;
 
     static {
-        paint.setColor(0xff0000ff);
+        bodyPaint.setColor(0xff0000ff);
+        pointerPaint.setColor(0xffccdd00);
     }
 
     // nano values for time measuring
@@ -23,7 +26,7 @@ public class Robot implements Drawable {
     //##############
     private float pixChangePerSec = 20;
     private float x, y, dir;
-    private float drawX, drawY, scale;
+    private float drawX, drawY, scale, pointerX, pointerY;
     private float dirSin, dirCos;
     private GameManager gm;
 
@@ -50,7 +53,11 @@ public class Robot implements Drawable {
         drawX = (x + gm.getOffsetX()) * scale;
         drawY = (y + gm.getOffsetY()) * scale;
 
-        c.drawCircle(drawX, drawY, SIZE*scale, paint);
+        pointerX = (x + SIZE * 3 * dirCos + gm.getOffsetX()) * scale;
+        pointerY = (y + SIZE * 3 * dirSin + gm.getOffsetY()) * scale;
+
+        c.drawLine(drawX, drawY, pointerX, pointerY, pointerPaint);
+        c.drawCircle(drawX, drawY, SIZE * scale, bodyPaint);
     }
 
     public void tick(long delayNanos) {
