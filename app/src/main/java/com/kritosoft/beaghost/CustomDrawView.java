@@ -105,8 +105,8 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
                         gm.setOffsetX(dx);
                         gm.setOffsetY(dy);
 
-                        mPosX += dx;
-                        mPosY += dy;
+                        mPosX += dx / mScaleFactor;
+                        mPosY += dy / mScaleFactor;
 
                         // Remember this touch position for the next move event
                         mLastTouchX = x2;
