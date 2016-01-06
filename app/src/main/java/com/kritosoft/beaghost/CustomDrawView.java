@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
+import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -25,6 +26,9 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
     private Obstacle[] obstacles;
     private Stack<Robot> robots;
     private float deltaX, deltaY;
+
+
+    float mLastTouchX,mLastTouchY;
 
     public CustomDrawView(Context contex) {
         super(contex);
@@ -49,20 +53,59 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
 //        Log.v("PointerCount: ", "" + e.getPointerCount());
         if (e.getPointerCount() == 1)
             switch (e.getAction()) {
+//                case MotionEvent.ACTION_DOWN:
+//                    deltaX = x;
+//                    deltaY = y;
+//                    return true;
+//                case MotionEvent.ACTION_MOVE:
+//                    gm.setOffsetX(x - deltaX);
+//                    gm.setOffsetY(y - deltaY);
+//                    deltaX = x;
+//                    deltaY = y;
+//                    return true;
+//                case MotionEvent.ACTION_UP:
+//                    //Do nothing
+//                    return true;
+
                 case MotionEvent.ACTION_DOWN:
-                    deltaX = x;
-                    deltaY = y;
-                    return true;
-                case MotionEvent.ACTION_MOVE:
-                    gm.setOffsetX(x - deltaX);
-                    gm.setOffsetY(y - deltaY);
-                    deltaX = x;
-                    deltaY = y;
-                    return true;
-                case MotionEvent.ACTION_UP:
-                    //Do nothing
-                    return true;
+
+                {
+                    final int pointerIndex = MotionEventCompat.getActionIndex(ev);
+                    final float x = MotionEventCompat.getX(ev, pointerIndex);
+                    final float y = MotionEventCompat.getY(ev, pointerIndex);
+
+                    // Remember where we started (for dragging)
+                    mLastTouchX = x;
+                    mLastTouchY = y;
+                    // Save the ID of this pointer (for dragging)
+                    mActivePointerId = MotionEventCompat.getPointerId(ev, 0);
+                    break;
+                }
+
+                case MotionEvent.ACTION_MOVE: {
+                    // Find the index of the active pointer and fetch its position
+                    final int pointerIndex =
+                            MotionEventCompat.findPointerIndex(ev, mActivePointerId);
+
+                    final float x2 = MotionEventCompat.getX(ev, pointerIndex);
+                    final float y2 = MotionEventCompat.getY(ev, pointerIndex);
+
+                    // Calculate the distance moved
+                    final float dx = x2 - mLastTouchX;
+                    final float dy = y2 - mLastTouchY;
+
+                    mPosX += dx;
+                    mPosY += dy;
+
+                    invalidate();
+
+                    // Remember this touch position for the next move event
+                    mLastTouchX = x2;
+                    mLastTouchY = y2;
+
+                    break;
             }
+
         else if (e.getPointerCount() == 2) {
             //TODO zoom
         }
