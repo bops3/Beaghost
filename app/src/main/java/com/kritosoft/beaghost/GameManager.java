@@ -1,6 +1,7 @@
 package com.kritosoft.beaghost;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.util.Log;
 
 import java.io.InputStreamReader;
@@ -14,6 +15,8 @@ public class GameManager {
 // sinnloser kommentar von Floooo
     public static final byte TYPE_OBSTACLE = 0, TYPE_ROBOT = 1;
     public static final String DELIM = " ";
+    public static final int drawDelayMillis = 16, tickDelayMillis = 16;
+    private Clock drawClock, tickClock;
 
     private Obstacle[] obstacles;
     private Stack<Robot> robots = new Stack<>();
@@ -21,12 +24,25 @@ public class GameManager {
     private CustomDrawView cdv;
     private int mapSizeX, mapSizeY, offsetX, offsetY;
     private float scale;
+    private Thread drawThread, tickThread;
 
     public GameManager(Context context) {
         this.context = context;
         genMapFromFile(R.raw.map1);
         cdv = new CustomDrawView(context);
         cdv.init(this, obstacles, robots);
+        drawClock = new Clock(drawDelayMillis, new Tickable() {
+            @Override
+            public void tick(int millisDelta) {
+                cdv.redraw();
+            }
+        });
+        tickClock = new Clock(tickDelayMillis, new Tickable() {
+            @Override
+            public void tick(int millisDelta) {
+                tickAll(millisDelta);
+            }
+        });
     }
 
     private void genMapFromFile(int mapId) {
@@ -96,5 +112,21 @@ public class GameManager {
         return cdv;
     }
 
+    private void tickAll(long delayNanos) {
 
+    }
+
+    public void drawAll(Canvas c) {
+        // TODO
+    }
+    // variables for ticking time management
+    public void startTicking() {
+        drawClock.startTicking();
+        tickClock.startTicking();
+    }
+
+    public void stopTicking() {
+        drawClock.stopTicking();
+        tickClock.stopTicking();
+    }
 }
