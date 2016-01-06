@@ -54,25 +54,33 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         switch (event.getAction()) {
 
             case MotionEvent.ACTION_DOWN:
+                Log.d("CustomDrawView", "ACTION_DOWN");
                 mode = DRAG;
                 deltaX = x;
                 deltaY = y;
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
+                Log.d("CustomDrawView", "ACTION_POINTER_DOWN");
                 mode = ZOOM;
+                deltaX = x;
+                deltaY = y;
                 break;
             case MotionEvent.ACTION_UP:
+                Log.d("CustomDrawView", "ACTION_UP");
                 mode = NONE;
                 if (nonPrimPointerRelaesed)
                     nonPrimPointerRelaesed = false;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
+                Log.d("CustomDrawView", "ACTION_POINTER_UP");
                 mode = DRAG;
                 nonPrimPointerRelaesed = true;
                 break;
             case MotionEvent.ACTION_MOVE:
 //                Log.d("CustomDrawView", "ACTION_MOVE");
-                if (!nonPrimPointerRelaesed) {
+                if (nonPrimPointerRelaesed) {
+                    nonPrimPointerRelaesed = false;
+                } else {
                     gm.setOffsetX(x - deltaX);
                     gm.setOffsetY(y - deltaY);
                 }
