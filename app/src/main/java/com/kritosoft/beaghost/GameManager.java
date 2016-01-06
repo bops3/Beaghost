@@ -2,6 +2,8 @@ package com.kritosoft.beaghost;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.InputStreamReader;
@@ -17,6 +19,8 @@ public class GameManager {
     public static final String DELIM = " ";
     public static final int drawTPS = 60, tickTPS = 60;
     private Clock drawClock, tickClock;
+
+    int col_b = Color.GREEN;
 
     private Obstacle[] obstacles;
     private Stack<Robot> robots = new Stack<>();
@@ -116,10 +120,6 @@ public class GameManager {
 
     }
 
-    public void drawAll(Canvas c) {
-        // TODO
-    }
-    // variables for ticking time management
     public void startTicking() {
         drawClock.startTicking();
         tickClock.startTicking();
@@ -128,5 +128,18 @@ public class GameManager {
     public void stopTicking() {
         drawClock.stopTicking();
         tickClock.stopTicking();
+    }
+
+    public Canvas drawCanvas(@NonNull Canvas c) {
+        c.drawColor(col_b);
+        synchronized (this) {
+            for (Obstacle o : obstacles) {
+                o.draw(c);
+            }
+            for (Robot r : robots) {
+                r.draw(c);
+            }
+        }
+        return c;
     }
 }
