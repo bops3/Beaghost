@@ -38,7 +38,9 @@ public class Robot implements Drawable {
 
     @Override
     public void draw(Canvas c) {
-        c.drawCircle(x - gm.getMapSizeX(), y - gm.getMapSizeY(), SIZE, paint);
+        float drawX = x + gm.getOffsetX();
+        float drawY = y + gm.getOffsetY();
+        c.drawCircle(drawX, drawY, SIZE, paint);
     }
 }
 

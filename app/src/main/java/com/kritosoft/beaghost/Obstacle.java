@@ -14,7 +14,7 @@ public class Obstacle implements Drawable {
     public static final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     static {
-        paint.setColor(0x000000ff);
+        paint.setColor(0xff000000);
     }
 
     private GameManager gm;
@@ -42,9 +42,8 @@ public class Obstacle implements Drawable {
 
     @Override
     public void draw(Canvas c) {
-        Log.v("Obstacle", "drawing obstacle" + (x - gm.getOffsetX()) + ", " + (y - gm.getOffsetY()));
-        float drawX = x - gm.getOffsetX();
-        float drawY = y - gm.getOffsetY();
+        float drawX = x + gm.getOffsetX();
+        float drawY = y + gm.getOffsetY();
         c.drawRect(drawX, drawY, drawX + width, drawY + height, paint);
     }
 }
