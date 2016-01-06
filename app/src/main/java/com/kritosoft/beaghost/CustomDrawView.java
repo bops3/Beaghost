@@ -10,7 +10,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import java.util.ArrayList;
+import java.util.Stack;
 
 /**
  * Created by Florian on 03.01.2016.
@@ -18,35 +18,30 @@ import java.util.ArrayList;
 public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callback {
 
     //private static final float LIFETIME = 60 * 10;
-    int thickness = 4;
-    Paint aktCol;
-    DrawThread dt;
-    ArrayList<Paint> paint = new ArrayList<>();
+    private Paint aktCol;
+    private DrawThread dt;
     private SurfaceHolder sh;
-    private float steigung, lenght, dx, dy;
-    private float startX = -1, startY = -1;
-    private float aktX = -1, aktY = -1;
-    private ArrayList<Float> aktpoints = new ArrayList<>(16);
-    //    private ArrayList<Float> aktpArray;
-    private ArrayList<ArrayList<Float>> points = new ArrayList<>();
+    private GameManager gm;
+    private Obstacle[] obstacles;
+    private Stack<Robot> robots;
+    private float deltaX, deltaY;
 
-    public CustomDrawView(Context context) {
+    public CustomDrawView(Context contex) {
+        super(contex);
+    }
+
+    public CustomDrawView(Context context, GameManager gm, Obstacle[] obs, Stack<Robot> robs) {
         super(context);
+        this.gm = gm;
+        obstacles = obs;
+        robots = robs;
         sh = getHolder();
         sh.addCallback(this);
-        changeColor(0xff0000ff);
         dt = new DrawThread(sh);
         dt.start();
 
     }
 
-    public static float[] toPrim(Object[] f) {
-        float[] a = new float[f.length];
-        for (int i = 0; i < f.length; i++) {
-            a[i] = (float) f[i];
-        }
-        return a;
-    }
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
@@ -57,50 +52,21 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         if (e.getPointerCount() == 1)
             switch (e.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    startX = x;
-                    startY = y;
-                    aktpoints.add(x);
-                    aktpoints.add(y);
-
-                    paint.add(aktCol);
-
+                    deltaX = x;
+                    deltaY = y;
                     return true;
                 case MotionEvent.ACTION_MOVE:
-                    aktX = x;
-                    aktY = y;
-//                    aktpArray =aktpoints.toArray());
-                    aktpoints.add(x);
-                    aktpoints.add(y);
+                    gm.setZoomVersatzX(x - deltaX);
+                    gm.setZoomVersatzY(y - deltaY);
+                    deltaX = x;
+                    deltaY = y;
                     return true;
                 case MotionEvent.ACTION_UP:
-                    if (paint.size() != 0) {//just removed all
-                        aktpoints.add(x);
-                        aktpoints.add(y);
-//                    points.add(new Integer[]{startX, startY, x, y, LIFETIME});
-                        if (aktpoints.size() % 4 != 0)
-                            Log.d("CustomView", "aktpoints wrong size");
-//                        float[] arrayPrim = toPrim(aktpoints.toArray(new Float[aktpoints.size()]));
-                        synchronized (dt) {
-                            points.add((ArrayList<Float>) aktpoints.clone());
-                            aktpoints.clear();
-                        }
-                    }
-
-//                    aktpArray = null;
-                    startX = -1;
-                    startY = -1;
-                    aktX = -1;
-                    aktY = -1;
+                    //Do nothing
                     return true;
             }
-        else if (e.getPointerCount() == 3) {
-            //remove all
-            synchronized (dt) {
-                points.clear();
-                aktpoints.clear();
-//                aktpArray = new float[0];
-                paint.clear();
-            }
+        else if (e.getPointerCount() == 2) {
+            //TODO zoom
         }
         return false;
     }
@@ -121,31 +87,18 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
 
     }
 
-    public void changeColor(int col) {
-        aktCol = new Paint(Paint.ANTI_ALIAS_FLAG);
-        aktCol.setColor(col);
-
-        aktCol.setStrokeWidth(thickness);
-        Log.d("CustomView", "color set: " + Integer.toHexString(col));
+    public void setGameManager(GameManager gameManager) {
+        gm = gameManager;
     }
 
-    public Canvas drawCanvas(Canvas c) {
-        return dt.drawCanvas(c);
+    public void setObstacles(Obstacle[] obstacles) {
+        this.obstacles = obstacles;
     }
 
-    public int getAktColor() {
-        return aktCol.getColor();
+    public void setRobots(Stack<Robot> robots) {
+        this.robots = robots;
     }
 
-    public int getThickness() {
-        return thickness;
-    }
-
-    public void setThickness(int t) {
-        thickness = t;
-        changeColor(aktCol.getColor());
-        Log.d("CustomView", "thickness set: " + t);
-    }
 
     public class DrawThread extends Thread {
 
@@ -167,7 +120,6 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
                 if (c != null)
                     sho.unlockCanvasAndPost(drawCanvas(c));
 
-
                 try {
                     Thread.sleep(16);
                 } catch (InterruptedException e) {
@@ -179,35 +131,16 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         }
 
         public Canvas drawCanvas(@NonNull Canvas c) {
-            c.drawColor(col_b);
-
-            // c.drawCircle(0, 0, y * (100 / (y + 10) + scaleY), paint);
             synchronized (this) {
-                for (int k = 0; k < points.size(); k++) {
-                    ArrayList<Float> p = points.get(k);
-                    drawPath(c, p, paint.get(k));
-                    //draw every point a circle
-
+                for (Obstacle o : obstacles) {
+                    o.draw(c);
                 }
-
-//                    if (startX != -1 && aktX != -1)
-//                        c.drawLine(startX, startY, aktX, aktY, paintSec);
-                if (aktpoints != null && aktpoints.size() > 0)
-                    drawPath(c, aktpoints, aktCol);
+                for (Robot r : robots) {
+                    r.draw(c);
+                }
+                //draw here
             }
             return c;
-        }
-
-        private void drawPath(Canvas c, ArrayList<Float> pnts, Paint p) {
-            if (pnts.size() >= 4) {
-                c.drawCircle(pnts.get(0), pnts.get(1), p.getStrokeWidth() / 2, p);
-                for (int i = 0; (i + 3) < pnts.size(); i += 2) {
-                    c.drawLine(pnts.get(i), pnts.get(i + 1), pnts.get(i + 2), pnts.get(i + 3), p);
-//                    if (pnts.size() >= i + 3) {
-                    c.drawCircle(pnts.get(i + 2), pnts.get(i + 3), p.getStrokeWidth() / 2, p);
-//                    }
-                }
-            }
         }
     }
 

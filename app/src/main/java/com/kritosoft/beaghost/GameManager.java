@@ -18,11 +18,16 @@ public class GameManager {
     private Obstacle[] obstacles;
     private Stack<Robot> robots;
     private Context contex;
-    private int mapSizeX, mapSizeY, zoomVersatzX, zoomVerstatzY;
+    private CustomDrawView cdv;
+    private int mapSizeX, mapSizeY, zoomVersatzX, zoomVersatzY;
 
     public GameManager(Context contex) {
         this.contex = contex;
         genMapFromFile(R.raw.map1);
+        cdv = new CustomDrawView(contex);
+        cdv.setGameManager(this);
+        cdv.setObstacles(obstacles);
+        cdv.setRobots(robots);
     }
 
     private void genMapFromFile(int mapId) {
@@ -33,7 +38,11 @@ public class GameManager {
 
         mapSizeX = Integer.parseInt(reader.next());
         mapSizeY = Integer.parseInt(reader.next());
-        anzObstacles = Integer.parseInt(reader.next());
+        Log.d("GameManager", "Map size: " + mapSizeX + ", " + mapSizeY);
+        String anzOStr = reader.next();
+        Log.d("GameManager", "antOStr:" + anzOStr);
+        anzObstacles = Integer.parseInt(anzOStr);
+//        anzObstacles = reader.nextInt();
 
         obstacles = new Obstacle[anzObstacles];
 
@@ -57,8 +66,16 @@ public class GameManager {
         return zoomVersatzX;
     }
 
-    public int getZoomVerstatzY() {
-        return zoomVerstatzY;
+    public void setZoomVersatzX(float change) {
+        zoomVersatzX += change;
+    }
+
+    public int getZoomVersatzY() {
+        return zoomVersatzY;
+    }
+
+    public void setZoomVersatzY(float change) {
+        zoomVersatzY += change;
     }
 
     public int getMapSizeX() {
@@ -68,4 +85,10 @@ public class GameManager {
     public int getMapSizeY() {
         return mapSizeY;
     }
+
+    public CustomDrawView getCustomDrawView() {
+        return cdv;
+    }
+
+
 }
