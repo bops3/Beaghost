@@ -65,12 +65,12 @@ public class Robot implements Drawable {
 //        pointerY = (y + SIZE * 3 * dirSin + gm.getOffsetY()) * scale;
 //
 //        c.drawLine(drawX, drawY, pointerX, pointerY, pointerPaint);
-        Log.d("Robot","draw");
+        Log.v("Robot","draw");
         c.drawCircle(x, y, SIZE, bodyPaint);
     }
 
     public void tick(long delayMillis) {
-        Log.d("Robot","tick");
+        Log.v("Robot","tick");
 
         millisToNextDirChange = System.nanoTime() - lastDirChangeMillis;
         // Richtungsänderung ändern?
