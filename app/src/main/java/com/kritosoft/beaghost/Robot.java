@@ -23,6 +23,7 @@ public class Robot implements Drawable {
     //##############
     private float pixChangePerSec = 20;
     private float x, y, dir;
+    private float drawX, drawY, scale;
     private float dirSin, dirCos;
     private GameManager gm;
 
@@ -45,9 +46,11 @@ public class Robot implements Drawable {
 
     @Override
     public void draw(Canvas c) {
-        float drawX = x + gm.getOffsetX();
-        float drawY = y + gm.getOffsetY();
-        c.drawCircle(drawX, drawY, SIZE, paint);
+        scale = gm.getScale();
+        drawX = (x + gm.getOffsetX()) * scale;
+        drawY = (y + gm.getOffsetY()) * scale;
+
+        c.drawCircle(drawX, drawY, SIZE*scale, paint);
     }
 
     public void tick(long delayNanos) {
