@@ -2,9 +2,7 @@ package com.kritosoft.beaghost;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -27,14 +25,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
     private Paint aktCol;
     private SurfaceHolder sh;
     private GameManager gm;
-    private Obstacle[] obstacles;
-    private Stack<Robot> robots;
     private float deltaX, deltaY;
-    private float startX, startY;
-    private float previousTranslateX, previousTranslateY;
-    private float mLastTouchX, mLastTouchY, mPosX, mPosY;
-    private int mActivePointerId;
-    private ScaleGestureDetector mScaleGestureDetector;
 
     private ScaleGestureDetector mScaleDetector;
     private float mScaleFactor = 1.f;
@@ -44,10 +35,8 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         this.context = context;
     }
 
-    public void init(GameManager gm, Obstacle[] obs, Stack<Robot> robs) {
+    public void init(GameManager gm) {
         this.gm = gm;
-        obstacles = obs;
-        robots = robs;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         gm.setScale(mScaleFactor);
         sh = getHolder();
@@ -114,19 +103,13 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         gm = gameManager;
     }
 
-    public void setObstacles(Obstacle[] obstacles) {
-        this.obstacles = obstacles;
-    }
-
-    public void setRobots(Stack<Robot> robots) {
-        this.robots = robots;
-    }
 
 
     public void redraw() {
         Canvas c = sh.lockCanvas();
-        if (c != null)
+        if (c != null) {
             sh.unlockCanvasAndPost(gm.drawCanvas(c));
+        }
     }
 
     private class ScaleListener

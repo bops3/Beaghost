@@ -42,9 +42,10 @@ public class Obstacle implements Drawable {
 
     @Override
     public void draw(Canvas c) {
-        drawX = (x + gm.getOffsetX()) * scale;
-        drawY = (y + gm.getOffsetY()) * scale;
-        scale = gm.getScale();
-        c.drawRect(drawX, drawY, drawX + width * scale, drawY + height * scale, paint);
+//        drawX = (x + gm.getOffsetX()) * scale;
+//        drawY = (y + gm.getOffsetY()) * scale;
+//        scale = gm.getScale();
+//        c.drawRect(drawX, drawY, drawX + width * scale, drawY + height * scale, paint);
+        c.drawRect(x,y,width,height, paint);
     }
 }

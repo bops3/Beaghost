@@ -14,14 +14,12 @@ import java.util.Stack;
  * Created by Florian on 02.01.2016.
  */
 public class GameManager {
-// sinnloser kommentar von Floooo
+    // sinnloser kommentar von Floooo
     public static final byte TYPE_OBSTACLE = 0, TYPE_ROBOT = 1;
     public static final String DELIM = " ";
     public static final int drawTPS = 60, tickTPS = 60;
-    private Clock drawClock, tickClock;
-
     int col_b = Color.GREEN;
-
+    private Clock drawClock, tickClock;
     private Obstacle[] obstacles;
     private Stack<Robot> robots = new Stack<>();
     private Context context;
@@ -34,7 +32,7 @@ public class GameManager {
         this.context = context;
         genMapFromFile(R.raw.map1);
         cdv = new CustomDrawView(context);
-        cdv.init(this, obstacles, robots);
+        cdv.init(this);
         drawClock = new Clock(drawTPS, new Tickable() {
             @Override
             public void tick(int millisDelta) {
@@ -131,6 +129,8 @@ public class GameManager {
     }
 
     public Canvas drawCanvas(@NonNull Canvas c) {
+        c.translate(offsetX, offsetY);
+        c.scale(scale, scale);
         c.drawColor(col_b);
         synchronized (this) {
             for (Obstacle o : obstacles) {

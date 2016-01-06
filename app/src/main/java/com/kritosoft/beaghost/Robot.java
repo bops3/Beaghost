@@ -49,15 +49,22 @@ public class Robot implements Drawable {
 
     @Override
     public void draw(Canvas c) {
-        scale = gm.getScale();
-        drawX = (x + gm.getOffsetX()) * scale;
-        drawY = (y + gm.getOffsetY()) * scale;
+//        scale = gm.getScale();
+//        drawX = (x + gm.getOffsetX()) * scale;
+//        drawY = (y + gm.getOffsetY()) * scale;
+//
+//        pointerX = (x + SIZE * 3 * dirCos + gm.getOffsetX()) * scale;
+//        pointerY = (y + SIZE * 3 * dirSin + gm.getOffsetY()) * scale;
+//
+//        c.drawLine(drawX, drawY, pointerX, pointerY, pointerPaint);
+//        c.drawCircle(drawX, drawY, SIZE * scale, bodyPaint);
 
-        pointerX = (x + SIZE * 3 * dirCos + gm.getOffsetX()) * scale;
-        pointerY = (y + SIZE * 3 * dirSin + gm.getOffsetY()) * scale;
 
-        c.drawLine(drawX, drawY, pointerX, pointerY, pointerPaint);
-        c.drawCircle(drawX, drawY, SIZE * scale, bodyPaint);
+//        pointerX = (x + SIZE * 3 * dirCos + gm.getOffsetX()) * scale;
+//        pointerY = (y + SIZE * 3 * dirSin + gm.getOffsetY()) * scale;
+//
+//        c.drawLine(drawX, drawY, pointerX, pointerY, pointerPaint);
+        c.drawCircle(x, y, SIZE, bodyPaint);
     }
 
     public void tick(long delayMillis) {
