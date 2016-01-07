@@ -7,6 +7,8 @@ import android.widget.RelativeLayout;
 
 public class MainActivity extends AppCompatActivity {
     private GameManager gm;
+    private boolean stopped = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         gm = new GameManager(MainActivity.this.getApplication());
 
         CustomDrawView cv = gm.getCustomDrawView();
-        Log.d("MainActivity","adding view..");
+        Log.d("MainActivity", "adding view..");
         addContentView(cv, lp);
         Log.d("MainActivity", "View added");
 
@@ -30,12 +32,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        stopped = true;
         gm.stopTicking();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        gm.startTicking();
+        if (stopped) {
+            stopped = false;
+            gm.startTicking();
+        }
     }
 }
