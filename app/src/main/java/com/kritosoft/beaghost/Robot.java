@@ -1,14 +1,12 @@
 package com.kritosoft.beaghost;
 
 import android.graphics.Canvas;
-import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Shader;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -19,8 +17,6 @@ public class Robot implements Drawable {
     // farben
     public static final Paint bodyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     public static final Paint boxPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    public final Paint viewFieldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-
     public static final float pi = (float) Math.PI, a = 1.051650213f;
     private static final float[] angles; // Winkel für Ecken von Boxen
 
@@ -39,6 +35,7 @@ public class Robot implements Drawable {
         angles[7] = 1.75f * pi;
     }
 
+    public final Paint viewFieldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     public final float radius = 15f; // TODO GRÖSSE!
 
     // Sichtfeld
@@ -126,7 +123,7 @@ public class Robot implements Drawable {
 
     private void drawViewField(float angleFrom, float angle, Canvas c) {
         // Sichtfeldfarbverlauf an Winkel und Position anpassen
-        RadialGradient gradient = new RadialGradient(x, y, viewfieldradius, new int[] { 0xccffffff, 0x00000000 }, null, Shader.TileMode.CLAMP);
+        RadialGradient gradient = new RadialGradient(x, y, viewfieldradius, new int[]{0xccffffff, 0x00000000}, null, Shader.TileMode.CLAMP);
         viewFieldPaint.setShader(gradient);
         RectF rectF = new RectF(x - viewfieldradius, y - viewfieldradius, x + viewfieldradius, y + viewfieldradius);
         c.drawArc(rectF, (float) Math.toDegrees(dir - angleFrom), (float) Math.toDegrees(angle), true, viewFieldPaint);
@@ -194,9 +191,9 @@ public class Robot implements Drawable {
             if (isInView(o.x + o.width, o.y))
                 list.add(new ObstacleDirBundle(o, tempAngle, o.x + o.width, o.y));
             if (isInView(o.x, o.y + o.height))
-               list.add(new ObstacleDirBundle(o, tempAngle, o.x, o.y + o.height));
+                list.add(new ObstacleDirBundle(o, tempAngle, o.x, o.y + o.height));
             if (isInView(o.x + o.width, o.y + o.height))
-               list.add(new ObstacleDirBundle(o, tempAngle, o.x + o.width, o.y + o.height));
+                list.add(new ObstacleDirBundle(o, tempAngle, o.x + o.width, o.y + o.height));
 
         }
         Collections.sort(list, new Comparator<ObstacleDirBundle>() {
@@ -206,16 +203,18 @@ public class Robot implements Drawable {
             }
         });
 
-        for (ObstacleDirBundle odb:list) {
+        for (ObstacleDirBundle odb : list) {
             float pX = odb.getPointX();
             float pY = odb.getPointY();
+            float m = getGradient(pX, pY);
+            //ray tracen, wenn hit in bereich dann dreieck, sonst bogen
         }
 
     }
 
     public synchronized boolean sees(Robot r) {
-        float m = (r.getY() - y) / (r.getX() - x);
-        float angleToR = (float) Math.atan(m);
+        float m = getGradient(r.getX(), r.getY());
+        float angleToR = getAngle(m);
         //Liegt der Punkt im Sichtfeld
         if (isAngleInFOV(angleToR))
             //Robot liegt im Sichtfeld, es muss geprüft werden, ob hindernisse dazwischen liegen
@@ -231,8 +230,12 @@ public class Robot implements Drawable {
         return dir - fov / 2 < angle && dir + fov / 2 > angle;
     }
 
-    private float getAngle(float x, float y) {
-        tempAngle = (float) Math.atan((y - this.y) / (x - this.x));
+    private float getGradient(float x, float y) {
+        return (y - this.y) / (x - this.x);
+    }
+
+    private float getAngle(float gradient) {
+        tempAngle = (float) Math.atan(gradient);
         return tempAngle;
     }
 
@@ -241,7 +244,7 @@ public class Robot implements Drawable {
     }
 
     private boolean isInView(float x, float y) {
-        return isAngleInFOV(getAngle(x, y)) && getDistance(x, y) <= viewfieldradius;
+        return isAngleInFOV(getAngle(getGradient(x, y))) && getDistance(x, y) <= viewfieldradius;
     }
 
     /**
