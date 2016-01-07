@@ -132,7 +132,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
             mScaleFactor *= sf;
             // Don't let the object get too small or too large.
             mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
-            Log.v("CustomDrawView", "scale: " + mScaleFactor);
+//            Log.v("CustomDrawView", "scale: " + mScaleFactor);
             gm.setScale(mScaleFactor);
             return true;
         }
