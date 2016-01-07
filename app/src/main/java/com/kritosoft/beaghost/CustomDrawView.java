@@ -92,16 +92,17 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.d("CutomView", "surfaceCreated");
+        gm.startTicking();
 
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
+        gm.stopTicking();
 
     }
 
@@ -125,8 +126,6 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         public boolean onScale(ScaleGestureDetector detector) {
             float sf = detector.getScaleFactor();
             mScaleFactor *= sf;
-            gm.changeOffsetX(pointerX * sf);
-            gm.changeOffsetY(pointerY * sf);
             // Don't let the object get too small or too large.
             mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
             Log.v("CustomDrawView", "scale: " + mScaleFactor);

@@ -31,20 +31,25 @@ public class GameManager {
     public GameManager(Context context) {
         this.context = context;
         genMapFromFile(R.raw.map1);
+        Log.d("GameManager", "creating...");
         cdv = new CustomDrawView(context);
+        Log.d("GameManager","CustomDrawView created!");
         cdv.init(this);
+        Log.d("GameManager", "CustomDrawView init finished.");
+
         drawClock = new Clock(drawTPS, new Tickable() {
             @Override
             public void tick(int millisDelta) {
                 cdv.redraw();
             }
         });
-        tickClock = new Clock(tickTPS, new Tickable() {
-            @Override
-            public void tick(int millisDelta) {
-                tickAll(millisDelta);
-            }
-        });
+//        tickClock = new Clock(tickTPS, new Tickable() {
+//            @Override
+//            public void tick(int millisDelta) {
+//                tickAll(millisDelta);
+//            }
+//        });
+        Log.d("GameManager", "GameManager finished.");
     }
 
     private void genMapFromFile(int mapId) {
@@ -122,7 +127,7 @@ public class GameManager {
 
     public void startTicking() {
         drawClock.startTicking();
-        tickClock.startTicking();
+//        tickClock.startTicking();
     }
 
     public void stopTicking() {
