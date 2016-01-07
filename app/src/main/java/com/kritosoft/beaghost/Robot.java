@@ -84,18 +84,18 @@ public class Robot implements Drawable {
             dirSin = (float) Math.sin(dir);
             dirCos = (float) Math.cos(dir);
         }
-        // bewegen
         float wayChangeThisTick = wayChangePerSec / framerate;
         {
             float xW = x + wayChangeThisTick * dirCos;
             float yW = y + wayChangeThisTick * dirSin;
-            if (!gm.isFree(xW, yW, radius)) {
+            if (!gm.isFree(xW, yW, radius)) { // Weg ist nicht frei, also umdrehen
                 dir += Math.PI;
                 dir %= 2f * Math.PI;
                 dirSin = (float) Math.sin(dir);
                 dirCos = (float) Math.cos(dir);
             }
         }
+        // bewegen
         x += wayChangeThisTick * dirCos;
         y += wayChangeThisTick * dirSin;
     }
