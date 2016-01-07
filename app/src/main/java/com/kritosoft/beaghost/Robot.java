@@ -12,17 +12,15 @@ public class Robot implements Drawable {
     public static final Paint pointerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     public static final Paint boxPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     public static final float pi = (float) Math.PI, a = 1.051650213f;
-    private static final float[] angles; // angle constants
+    private static final float[] angles; // Winkel für Ecken von Boxen
 
-    float[] points = new float[8];
-    Path drawPath = new Path();
-
+    Path drawPath = new Path(); // wiederverwendet für das Zeichnen der Boxen
 
     static {
-        bodyPaint.setColor(0xff0000ff);
-        pointerPaint.setColor(0xffccdd00);
+        bodyPaint.setColor(0xffaabb77);
+        pointerPaint.setColor(0xffaabb77);
         boxPaint.setColor(0xff000000);
-        pointerPaint.setStrokeWidth(5f);
+        pointerPaint.setStrokeWidth(8f);
         // angles init
         angles = new float[8];
         angles[0] = pi / 4;
@@ -38,8 +36,7 @@ public class Robot implements Drawable {
     public final float radius = 15; // TODO Konstante!
     private final float fov = (float) (0.25 * Math.PI);
     private final float distA = (float) (Math.sqrt(2) * radius), distB = (float) (Math.sqrt(4.0625) * radius); // TODO anpassen, wenn sich radius ändert
-    // TODO synchronizen
-
+    // Entfernungen zu den Ecken der Boxen zum Zeichnen
 
     private float[] angleSins = new float[8], angleCosins = new float[8];
     // nano values for time measuring
@@ -75,55 +72,38 @@ public class Robot implements Drawable {
         return new Robot(x, y, dir, gm);
     }
 
-    public float getRadius() {
+    public synchronized float getRadius() {
         return radius;
     }
 
-    public float getX() {
+    public synchronized float getX() {
         return x;
     }
 
-    public float getY() {
+    public synchronized float getY() {
         return y;
     }
 
     @Override
-    public void draw(Canvas c) {
+    public synchronized void draw(Canvas c) {
         pointerX = x + radius * 1.3f * dirCos;
         pointerY = y + radius * 1.3f * dirSin;
 
         // Blöcke links und rechts
-
         // rechter Block
-        points[0] = angleCosins[0] * distA + x;
-        points[1] = angleSins[0] * distA + y;
-        points[2] = angleCosins[1] * distB + x;
-        points[3] = angleSins[1] * distB + y;
-        points[4] = angleCosins[2] * distB + x;
-        points[5] = angleSins[2] * distB + y;
-        points[6] = angleCosins[3] * distA + x;
-        points[7] = angleSins[3] * distA + y;
         drawPath.reset();
-        drawPath.moveTo(points[0], points[1]);
-        drawPath.lineTo(points[2], points[3]);
-        drawPath.lineTo(points[4], points[5]);
-        drawPath.lineTo(points[6], points[7]);
+        drawPath.moveTo(angleCosins[0] * distA + x, angleSins[0] * distA + y);
+        drawPath.lineTo(angleCosins[1] * distB + x, angleSins[1] * distB + y);
+        drawPath.lineTo(angleCosins[2] * distB + x, angleSins[2] * distB + y);
+        drawPath.lineTo(angleCosins[3] * distA + x, angleSins[3] * distA + y);
         drawPath.close();
         c.drawPath(drawPath, boxPaint);
         // linker Block
-        points[0] = angleCosins[4] * distA + x;
-        points[1] = angleSins[4] * distA + y;
-        points[2] = angleCosins[5] * distB + x;
-        points[3] = angleSins[5] * distB + y;
-        points[4] = angleCosins[6] * distB + x;
-        points[5] = angleSins[6] * distB + y;
-        points[6] = angleCosins[7] * distA + x;
-        points[7] = angleSins[7] * distA + y;
         drawPath.reset();
-        drawPath.moveTo(points[0], points[1]);
-        drawPath.lineTo(points[2], points[3]);
-        drawPath.lineTo(points[4], points[5]);
-        drawPath.lineTo(points[6], points[7]);
+        drawPath.moveTo(angleCosins[4] * distA + x, angleSins[4] * distA + y);
+        drawPath.lineTo(angleCosins[5] * distB + x, angleSins[5] * distB + y);
+        drawPath.lineTo(angleCosins[6] * distB + x, angleSins[6] * distB + y);
+        drawPath.lineTo(angleCosins[7] * distA + x, angleSins[7] * distA + y);
         drawPath.close();
         c.drawPath(drawPath, boxPaint);
 
@@ -131,7 +111,7 @@ public class Robot implements Drawable {
         c.drawCircle(x, y, radius, bodyPaint);
     }
 
-    public void tick(long delayMillis) {
+    public synchronized void tick(long delayMillis) {
 
         millisFromLastDirChange = System.currentTimeMillis() - lastDirChangeMillis;
         if (millisFromLastDirChange > nextDirChangeDelayMillis) {
@@ -186,7 +166,7 @@ public class Robot implements Drawable {
         }
     }
 
-    public boolean sees(Robot r) {
+    public synchronized boolean sees(Robot r) {
         float m = (r.getY() - y) / (r.getX() - x);
         float angleToR = (float) Math.atan(m);
         float x;
