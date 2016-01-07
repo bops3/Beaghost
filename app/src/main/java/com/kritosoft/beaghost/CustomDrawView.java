@@ -23,7 +23,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
     private int width, height;
 
     private ScaleGestureDetector mScaleDetector;
-    private float mScaleFactor = 1.f;
+    private float mScaleFactor = 2f;
 
     public CustomDrawView(Context context) {
         super(context);
