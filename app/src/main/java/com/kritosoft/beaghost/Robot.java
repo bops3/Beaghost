@@ -18,8 +18,6 @@ public class Robot implements Drawable {
     public static final float pi = (float) Math.PI, a = 1.051650213f;
     private static final float[] angles; // Winkel für Ecken von Boxen
 
-    Path drawPath = new Path(); // wiederverwendet für das Zeichnen der Boxen
-
     static {
         bodyPaint.setColor(0xffaabb77);
         pointerPaint.setColor(0xffaabb77);
@@ -41,8 +39,8 @@ public class Robot implements Drawable {
     public final float radius = 15f, viewfieldradius = 60f; // TODO GRÖSSE!
     private final float fov = (float) (0.25 * Math.PI);
     private final float distA = (float) (Math.sqrt(2) * radius), distB = (float) (Math.sqrt(4.0625) * radius); // TODO anpassen, wenn sich radius ändert
+    Path drawPath = new Path(); // wiederverwendet für das Zeichnen der Boxen
     // Entfernungen zu den Ecken der Boxen zum Zeichnen
-
     private float[] angleSins = new float[8], angleCosins = new float[8];
     // nano values for time measuring
     private long millisFromLastDirChange = 0, lastDirChangeMillis, nextDirChangeDelayMillis;
@@ -169,25 +167,54 @@ public class Robot implements Drawable {
         }
     }
 
+    private synchronized/* ? */ void drawIntersectedField() {
+        for (Obstacle o : gm.getObstacles()) {
+
+        }
+    }
+
     public synchronized boolean sees(Robot r) {
         float m = (r.getY() - y) / (r.getX() - x);
         float angleToR = (float) Math.atan(m);
-        float x;
-        if (dir - fov / 2 < angleToR && dir + fov / 2 > angleToR) {
+        //Liegt der Punkt im Sichtfeld
+        if (dir - fov / 2 < angleToR && dir + fov / 2 > angleToR)
             //Robot liegt im Sichtfeld, es muss geprüft werden, ob hindernisse dazwischen liegen
-            for (Obstacle o : gm.getObstacles()) {
-                /**horizontal col. detection:
-                 * line: y=m*x
-                 * y = a
-                 * => x = a/m, wenn x auf der Seite liegt, dann Kollision
-                 */
-                x = o.x;
+            for (Obstacle o : gm.getObstacles())
+                //Es reicht 3 Kanten zu überprüfen, da immer mind 2 geschnitten werden
+                if (sHLC(m, o.y, o.x, o.width) || sHLC(m, o.y + o.height, o.x, o.width) || sVLC(m, o.x, o.y, o.height))
+                    return false;
 
-            }
+        return true;
+    }
 
+    /**
+     * simple horizontal line collision
+     *
+     * @return if they intersect
+     */
+    private boolean sHLC(float gradientA, float yB, float xB, float widthB) {
+        /**horizontal col. detection:
+         * A: line: y=m*x
+         * B: y = a
+         * => x = a/m, wenn x auf der Seite liegt, dann Kollision
+         */
+        float sx = yB / gradientA;
+        return sx > xB && sx < xB + widthB;
+    }
 
-        }
-        return false;
+    /**
+     * simple vertical line collision
+     *
+     * @return if they intersect
+     */
+    private boolean sVLC(float gradientA, float xB, float yB, float heightB) {
+        /**vertical col. detection:
+         * A: line: y=m*x
+         * B: x = a
+         * => y = m*a, wenn y auf der Seite liegt, dann Kollision
+         */
+        float sy = xB * gradientA;
+        return sy > yB && sy < yB + heightB;
     }
 
 }
