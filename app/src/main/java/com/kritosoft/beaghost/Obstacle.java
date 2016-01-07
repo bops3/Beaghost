@@ -46,6 +46,6 @@ public class Obstacle implements Drawable {
 //        drawY = (y + gm.getOffsetY()) * scale;
 //        scale = gm.getScale();
 //        c.drawRect(drawX, drawY, drawX + width * scale, drawY + height * scale, paint);
-        c.drawRect(x,y,width,height, paint);
+        c.drawRect(x, y, x + width, y + height, paint);
     }
 }

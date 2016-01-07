@@ -20,6 +20,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
     private SurfaceHolder sh;
     private GameManager gm;
     private float deltaX, deltaY;
+    private float width, height;
 
     private ScaleGestureDetector mScaleDetector;
     private float mScaleFactor = 1.f;
@@ -32,6 +33,9 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
     public void init(GameManager gm) {
         this.gm = gm;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
+        width = getMeasuredWidth();
+        height = getMeasuredHeight();
+        Log.d("CustomDrawView", "size of view: " + width + ", " + height);
         gm.setScale(mScaleFactor);
         sh = getHolder();
         sh.addCallback(this);

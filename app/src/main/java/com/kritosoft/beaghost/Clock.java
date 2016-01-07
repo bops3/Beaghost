@@ -34,7 +34,7 @@ public class Clock implements Runnable {
     }
 
     private void mainTick() throws Exception {
-        Log.v("Clock", "mainTick() start");
+//        Log.v("Clock", "mainTick() start");
         long timeBegin = System.currentTimeMillis();
         synchronized (this) {
             try {
@@ -48,7 +48,7 @@ public class Clock implements Runnable {
             }
             lastTickDelayMillis = (int) (System.currentTimeMillis() - timeBegin);
         }
-        Log.v("Clock", "mainTick() finished");
+//        Log.v("Clock", "mainTick() finished");
     }
 
     @Override
