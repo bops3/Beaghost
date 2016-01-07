@@ -2,7 +2,6 @@ package com.kritosoft.beaghost;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -13,16 +12,11 @@ import android.view.SurfaceView;
  * Created by Florian on 03.01.2016.
  */
 public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callback {
-    private static final int NONE = 0, DRAG = 1, ZOOM = 2;
-    private int mode = 0;
-    private boolean dragged = true;
+
     private boolean nonPrimPointerRelaesed = false;
-
-
-    //...
+    private float pointerX, pointerY;
     //private static final float LIFETIME = 60 * 10;
     private Context context;
-    private Paint aktCol;
     private SurfaceHolder sh;
     private GameManager gm;
     private float deltaX, deltaY;
@@ -55,25 +49,23 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
 
             case MotionEvent.ACTION_DOWN:
                 Log.d("CustomDrawView", "ACTION_DOWN");
-                mode = DRAG;
+                pointerX = x;
+                pointerY = y;
                 deltaX = x;
                 deltaY = y;
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
                 Log.d("CustomDrawView", "ACTION_POINTER_DOWN");
-                mode = ZOOM;
                 deltaX = x;
                 deltaY = y;
                 break;
             case MotionEvent.ACTION_UP:
                 Log.d("CustomDrawView", "ACTION_UP");
-                mode = NONE;
                 if (nonPrimPointerRelaesed)
                     nonPrimPointerRelaesed = false;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 Log.d("CustomDrawView", "ACTION_POINTER_UP");
-                mode = DRAG;
                 nonPrimPointerRelaesed = true;
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -81,8 +73,8 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
                 if (nonPrimPointerRelaesed) {
                     nonPrimPointerRelaesed = false;
                 } else {
-                    gm.setOffsetX(x - deltaX);
-                    gm.setOffsetY(y - deltaY);
+                    gm.changeOffsetX(x - deltaX);
+                    gm.changeOffsetY(y - deltaY);
                 }
                 deltaX = x;
                 deltaY = y;
@@ -131,8 +123,10 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
             extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            mScaleFactor *= detector.getScaleFactor();
-
+            float sf = detector.getScaleFactor();
+            mScaleFactor *= sf;
+            gm.changeOffsetX(pointerX * sf);
+            gm.changeOffsetY(pointerY * sf);
             // Don't let the object get too small or too large.
             mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
             Log.v("CustomDrawView", "scale: " + mScaleFactor);

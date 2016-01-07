@@ -82,7 +82,7 @@ public class GameManager {
         return offsetX;
     }
 
-    public void setOffsetX(float change) {
+    public void changeOffsetX(float change) {
         offsetX += change;
     }
 
@@ -98,7 +98,7 @@ public class GameManager {
         return offsetY;
     }
 
-    public void setOffsetY(float change) {
+    public void changeOffsetY(float change) {
         offsetY += change;
     }
 
