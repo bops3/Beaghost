@@ -130,6 +130,9 @@ public class GameManager {
     public int getMapSizeY() {
         return mapSizeY;
     }
+    public Obstacle[] getObstacles(){
+        return obstacles;
+    }
 
     public CustomDrawView getCustomDrawView() {
         return cdv;

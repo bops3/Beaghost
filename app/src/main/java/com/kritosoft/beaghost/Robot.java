@@ -31,6 +31,9 @@ public class Robot implements Drawable {
         angles[7] = 1.75f * pi;
     }
 
+    private final float fov = (float) (0.25 * Math.PI);
+
+    private float radius = 15;
     public final float radius = 15; // TODO Konstante!
     private final float distA = (float) (Math.sqrt(2) * radius), distB = (float) (Math.sqrt(4.0625) * radius); // TODO anpassen, wenn sich radius ändert
     private float[] angleSins = new float[8], angleCosins = new float[8];
@@ -178,5 +181,27 @@ public class Robot implements Drawable {
             angleCosins[i] = (float) Math.cos(actangle);
         }
     }
+
+    public boolean sees(Robot r) {
+        float m = (r.getY() - y) / (r.getX() - x);
+        float angleToR = (float) Math.atan(m);
+        float x;
+        if (dir - fov / 2 < angleToR && dir + fov / 2 > angleToR) {
+            //Robot liegt im Sichtfeld, es muss geprüft werden, ob hindernisse dazwischen liegen
+            for (Obstacle o : gm.getObstacles()) {
+                /**horizontal col. detection:
+                 * line: y=m*x
+                 * y = a
+                 * => x = a/m, wenn x auf der Seite liegt, dann Kollision
+                 */
+                x = o.x;
+
+            }
+
+
+        }
+        return false;
+    }
+
 }
 
