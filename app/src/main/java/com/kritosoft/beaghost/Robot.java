@@ -15,6 +15,7 @@ public class Robot implements Drawable {
     static {
         bodyPaint.setColor(0xff0000ff);
         pointerPaint.setColor(0xffccdd00);
+        pointerPaint.setStrokeWidth(5f);
     }
 
     // nano values for time measuring
