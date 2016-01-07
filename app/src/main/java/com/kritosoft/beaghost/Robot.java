@@ -6,9 +6,6 @@ import android.util.Log;
 
 import java.util.Scanner;
 
-/**
- * Created by Florian on 02.01.2016.
- */
 public class Robot implements Drawable {
     public static final Paint bodyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     public static final Paint pointerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -21,12 +18,14 @@ public class Robot implements Drawable {
     }
 
     // nano values for time measuring
-    private long millisFromLastDirChange = 0, lastDirChangeMillis;
+    private long millisFromLastDirChange = 0, lastDirChangeMillis, nextDirChangeDelayMillis;
     // movement parameters!#############
-    private float dirChangeRadiantsPerSec = 1f;
-    private long nextDirChangeDelayMillis = 1000;
+    private float maxDCRPS = (float) Math.PI, minDCRPS = (float) Math.PI / 4; // border values for dcrps
+    private int minNDCDM = 700, maxNDCDM = 1400; // next direction change delay milliseconds
+    // automatisch erstellte Momentanwerte (aus Bereichen zufällig generiert)
+    private float dirChangeRadiantsPerSec = 1f; // direction change radiants per second (dcrps)
+    private float wayChangePerSec = 300;
     //##############
-    private float pixChangePerSec = 300;
     private float x, y, dir;
     private float drawX, drawY, scale, pointerX, pointerY;
     private float dirSin, dirCos;
@@ -78,14 +77,14 @@ public class Robot implements Drawable {
         if (millisFromLastDirChange > nextDirChangeDelayMillis) {
             lastDirChangeMillis = System.currentTimeMillis();
             millisFromLastDirChange = 0;
-            nextDirChangeDelayMillis = 500 + (long) (Math.random() * 1000);
+            nextDirChangeDelayMillis = minNDCDM + (long) (Math.random() * (maxNDCDM - minNDCDM));
 
             // change direction TODO Beträge anpassen!!!
             dirChangeRadiantsPerSec *= -1;
-            if (Math.random() < 0.333d) {
+            if (Math.random() < 0.333d) { // TODO Wahrscheinlichkeiten anpassen..
                 dirChangeRadiantsPerSec = 0;
             } else {
-                dirChangeRadiantsPerSec = (1f + (float) Math.random());
+                dirChangeRadiantsPerSec = (minDCRPS + (float) Math.random() * (maxDCRPS - minDCRPS));
                 if (Math.random() < 0.5f)
                     dirChangeRadiantsPerSec *= -1;
             }
@@ -99,8 +98,11 @@ public class Robot implements Drawable {
             dirCos = (float) Math.cos(dir);
         }
         // bewegen
-        x += (pixChangePerSec / framerate) * dirCos;
-        y += (pixChangePerSec / framerate) * dirSin;
+        float xW = x + (wayChangePerSec / framerate) * dirCos;
+        float yW = y + (wayChangePerSec / framerate) * dirSin;
+        if (gm.isFree(xW, yW)) {
+
+        }
     }
 }
 
