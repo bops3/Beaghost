@@ -50,21 +50,21 @@ public class Robot implements Drawable {
 
     @Override
     public void draw(Canvas c) {
-//        scale = gm.getScale();
-//        drawX = (x + gm.getOffsetX()) * scale;
-//        drawY = (y + gm.getOffsetY()) * scale;
-//
-//        pointerX = (x + SIZE * 3 * dirCos + gm.getOffsetX()) * scale;
-//        pointerY = (y + SIZE * 3 * dirSin + gm.getOffsetY()) * scale;
-//
-//        c.drawLine(drawX, drawY, pointerX, pointerY, pointerPaint);
-//        c.drawCircle(drawX, drawY, SIZE * scale, bodyPaint);
+        scale = gm.getScale();
+        drawX = (x + gm.getOffsetX()) * scale;
+        drawY = (y + gm.getOffsetY()) * scale;
+
+        pointerX = (x + SIZE * 3 * dirCos + gm.getOffsetX()) * scale;
+        pointerY = (y + SIZE * 3 * dirSin + gm.getOffsetY()) * scale;
+
+        c.drawLine(drawX, drawY, pointerX, pointerY, pointerPaint);
+        c.drawCircle(drawX, drawY, SIZE * scale, bodyPaint);
 
 
-//        pointerX = (x + SIZE * 3 * dirCos + gm.getOffsetX()) * scale;
-//        pointerY = (y + SIZE * 3 * dirSin + gm.getOffsetY()) * scale;
-//
-//        c.drawLine(drawX, drawY, pointerX, pointerY, pointerPaint);
+        pointerX = (x + SIZE * 3 * dirCos + gm.getOffsetX()) * scale;
+        pointerY = (y + SIZE * 3 * dirSin + gm.getOffsetY()) * scale;
+
+        c.drawLine(drawX, drawY, pointerX, pointerY, pointerPaint);
         Log.v("Robot", "draw");
         c.drawCircle(x, y, SIZE, bodyPaint);
     }
@@ -98,11 +98,19 @@ public class Robot implements Drawable {
             dirCos = (float) Math.cos(dir);
         }
         // bewegen
-        float xW = x + (wayChangePerSec / framerate) * dirCos;
-        float yW = y + (wayChangePerSec / framerate) * dirSin;
-        if (gm.isFree(xW, yW)) {
-
+        float wayChangeThisTick = wayChangePerSec / framerate;
+        {
+            float xW = x + wayChangeThisTick * dirCos;
+            float yW = y + wayChangeThisTick * dirSin;
+            if (gm.isFree(xW, yW)) {
+                dir += Math.PI;
+                dir %= 2f * Math.PI;
+                dirSin = (float) Math.sin(dir);
+                dirCos = (float) Math.cos(dir);
+            }
         }
+        x += wayChangeThisTick * dirCos;
+        y += wayChangeThisTick * dirSin;
     }
 }
 
