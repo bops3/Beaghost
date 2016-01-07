@@ -84,7 +84,6 @@ public class Robot implements Drawable {
             dirSin = (float) Math.sin(dir);
             dirCos = (float) Math.cos(dir);
         }
-        // bewegen
         float wayChangeThisTick = wayChangePerSec / framerate;
         {
             float xW = x + wayChangeThisTick * dirCos;
@@ -96,6 +95,7 @@ public class Robot implements Drawable {
                 dirCos = (float) Math.cos(dir);
             }
         }
+        // bewegen
         x += wayChangeThisTick * dirCos;
         y += wayChangeThisTick * dirSin;
     }
