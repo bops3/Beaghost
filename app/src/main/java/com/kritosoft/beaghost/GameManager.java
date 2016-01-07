@@ -24,6 +24,8 @@ public class GameManager {
     private Stack<Robot> robots = new Stack<>();
     private Context context;
     private CustomDrawView cdv;
+    //offset and mapsize are measured in the same unit.
+    //screenSize unit is different!(depends on scale)
     private int mapSizeX, mapSizeY, offsetX, offsetY, offsetMaxX, offsetMaxY, offsetMinY = 0, offsetMinX = 0, screenX, screenY;
     private float scale;
     private Thread drawThread, tickThread;
@@ -147,7 +149,7 @@ public class GameManager {
     public Canvas drawCanvas(@NonNull Canvas c) {
 
         c.scale(scale, scale);
-        c.translate(offsetX , offsetY );
+        c.translate(offsetX, offsetY);
 //        Log.v("GameManager", "offset:" + offsetX + "," + offsetY);
 
         c.drawColor(col_b);
@@ -186,7 +188,7 @@ public class GameManager {
     }
 
     private void setMaxOffset() {
-        offsetMaxX = -(Math.round(mapSizeX /* * scale*/) - screenX);
-        offsetMaxY = -(Math.round(mapSizeY /* * scale*/) - screenY);
+        offsetMaxX = -(mapSizeX - Math.round(screenX / scale));
+        offsetMaxY = -(mapSizeY - Math.round(screenY / scale));
     }
 }
