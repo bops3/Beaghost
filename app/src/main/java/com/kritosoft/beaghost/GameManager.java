@@ -89,8 +89,10 @@ public class GameManager {
 
     public void changeOffsetX(float change) {
         offsetX += change / scale;
-        if (offsetX > 0)
-            offsetX = 0;
+        if (offsetX > offsetMinX)//offset: -123, offsetMinx = 0
+            offsetX = offsetMinX;
+        else if (offsetX < offsetMaxX)//offset: -123, offsetMax : -1000
+            offsetX = offsetMaxX;
     }
 
     public float getScale() {
@@ -107,8 +109,11 @@ public class GameManager {
 
     public void changeOffsetY(float change) {
         offsetY += change / scale;
-        if (offsetY > 0)
-            offsetY = 0;
+        if (offsetY > offsetMinY)
+            offsetY = offsetMinY;
+        else if (offsetY < offsetMaxY)//offset: -123, offsetMax : -1000
+            offsetY = offsetMaxY;
+
     }
 
     public int getMapSizeX() {
@@ -142,7 +147,7 @@ public class GameManager {
     public Canvas drawCanvas(@NonNull Canvas c) {
 
         c.scale(scale, scale);
-        c.translate(offsetX, offsetY);
+        c.translate(offsetX , offsetY );
 //        Log.v("GameManager", "offset:" + offsetX + "," + offsetY);
 
         c.drawColor(col_b);
@@ -172,5 +177,16 @@ public class GameManager {
             }
         }
         return true;
+    }
+
+    public void setViewSize(int width, int height) {
+        screenX = width;
+        screenY = height;
+        setMaxOffset();
+    }
+
+    private void setMaxOffset() {
+        offsetMaxX = -(Math.round(mapSizeX * scale) - screenX);
+        offsetMaxY = -(Math.round(mapSizeY * scale) - screenY);
     }
 }
