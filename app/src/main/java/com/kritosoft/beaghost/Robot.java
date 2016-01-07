@@ -5,6 +5,10 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Robot implements Drawable {
@@ -44,6 +48,8 @@ public class Robot implements Drawable {
     private float[] angleSins = new float[8], angleCosins = new float[8];
     // nano values for time measuring
     private long millisFromLastDirChange = 0, lastDirChangeMillis, nextDirChangeDelayMillis;
+    //### temp vars #######
+    private float tempAngle;
     // movement parameters!#############
     private float maxDCRPS = (float) Math.PI, minDCRPS = (float) Math.PI / 4; // border values for dcrps
     private int minNDCDM = 700, maxNDCDM = 1400; // next direction change delay milliseconds
@@ -167,17 +173,38 @@ public class Robot implements Drawable {
         }
     }
 
-    private synchronized/* ? */ void drawIntersectedField() {
+    private void drawIntersectedField() {
+        LinkedList<ObstacleDirBundle> list = new LinkedList<>();
         for (Obstacle o : gm.getObstacles()) {
+            if (isInView(o.x, o.y))
+                list.add(new ObstacleDirBundle(o, tempAngle, o.x, o.y));
+            if (isInView(o.x + o.width, o.y))
+                list.add(new ObstacleDirBundle(o, tempAngle, o.x + o.width, o.y));
+            if (isInView(o.x, o.y + o.height))
+               list.add(new ObstacleDirBundle(o, tempAngle, o.x, o.y + o.height));
+            if (isInView(o.x + o.width, o.y + o.height))
+               list.add(new ObstacleDirBundle(o, tempAngle, o.x + o.width, o.y + o.height));
 
         }
+        Collections.sort(list, new Comparator<ObstacleDirBundle>() {
+            @Override
+            public int compare(ObstacleDirBundle lhs, ObstacleDirBundle rhs) {
+                return (int) Math.signum(lhs.getDir() - rhs.getDir());
+            }
+        });
+
+        for (ObstacleDirBundle odb:list) {
+            float pX = odb.getPointX();
+            float pY = odb.getPointY();
+        }
+
     }
 
     public synchronized boolean sees(Robot r) {
         float m = (r.getY() - y) / (r.getX() - x);
         float angleToR = (float) Math.atan(m);
         //Liegt der Punkt im Sichtfeld
-        if (dir - fov / 2 < angleToR && dir + fov / 2 > angleToR)
+        if (isAngleInFOV(angleToR))
             //Robot liegt im Sichtfeld, es muss geprüft werden, ob hindernisse dazwischen liegen
             for (Obstacle o : gm.getObstacles())
                 //Es reicht 3 Kanten zu überprüfen, da immer mind 2 geschnitten werden
@@ -185,6 +212,23 @@ public class Robot implements Drawable {
                     return false;
 
         return true;
+    }
+
+    private boolean isAngleInFOV(float angle) {
+        return dir - fov / 2 < angle && dir + fov / 2 > angle;
+    }
+
+    private float getAngle(float x, float y) {
+        tempAngle = (float) Math.atan((y - this.y) / (x - this.x));
+        return tempAngle;
+    }
+
+    private float getDistance(float x, float y) {
+        return (float) Math.sqrt(Math.pow(x - this.x, 2) + Math.pow(y - this.y, 2));
+    }
+
+    private boolean isInView(float x, float y) {
+        return isAngleInFOV(getAngle(x, y)) && getDistance(x, y) <= viewfieldradius;
     }
 
     /**
