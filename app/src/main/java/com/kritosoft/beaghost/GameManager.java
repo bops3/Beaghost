@@ -103,6 +103,7 @@ public class GameManager {
 
     public void setScale(float scale) {
         this.scale = scale;
+        setMaxOffset();
     }
 
     public int getOffsetY() {
