@@ -33,9 +33,6 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
     public void init(GameManager gm) {
         this.gm = gm;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
-        width = getMeasuredWidth();
-        height = getMeasuredHeight();
-        Log.d("CustomDrawView", "size of view: " + width + ", " + height);
         gm.setScale(mScaleFactor);
         sh = getHolder();
         sh.addCallback(this);
@@ -52,24 +49,24 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         switch (event.getAction()) {
 
             case MotionEvent.ACTION_DOWN:
-                Log.d("CustomDrawView", "ACTION_DOWN");
+                Log.v("CustomDrawView", "ACTION_DOWN");
                 pointerX = x;
                 pointerY = y;
                 deltaX = x;
                 deltaY = y;
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
-                Log.d("CustomDrawView", "ACTION_POINTER_DOWN");
+                Log.v("CustomDrawView", "ACTION_POINTER_DOWN");
                 deltaX = x;
                 deltaY = y;
                 break;
             case MotionEvent.ACTION_UP:
-                Log.d("CustomDrawView", "ACTION_UP");
+                Log.v("CustomDrawView", "ACTION_UP");
                 if (nonPrimPointerRelaesed)
                     nonPrimPointerRelaesed = false;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
-                Log.d("CustomDrawView", "ACTION_POINTER_UP");
+                Log.v("CustomDrawView", "ACTION_POINTER_UP");
                 nonPrimPointerRelaesed = true;
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -96,6 +93,9 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.d("CutomView", "surfaceCreated");
+        width = getMeasuredWidth();
+        height = getMeasuredHeight();
+        Log.d("CustomDrawView", "size of view: " + width + ", " + height);
         gm.startTicking();
 
     }
