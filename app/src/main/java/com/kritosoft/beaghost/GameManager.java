@@ -155,7 +155,7 @@ public class GameManager {
 
     public boolean isFree(float xW, float yW, float radius) {
         for (Obstacle o: obstacles) {
-            if (!(xW + radius < o.x && xW > o.x + o.width + radius && yW + radius < o.y && yW > o.y + o.height))
+            if (xW + radius >= o.x && xW - radius <= o.x + o.width && yW + radius >= o.y && yW - radius <= o.y + o.height)
                 Log.d("Collisiondetection", "Collision!");
                 return false;
         }

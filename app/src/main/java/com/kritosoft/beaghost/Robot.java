@@ -88,7 +88,7 @@ public class Robot implements Drawable {
         {
             float xW = x + wayChangeThisTick * dirCos;
             float yW = y + wayChangeThisTick * dirSin;
-            if (!gm.isFree(xW, yW, radius)) {
+            if (!gm.isFree(xW, yW, radius)) { // Weg ist nicht frei, also umdrehen
                 dir += Math.PI;
                 dir %= 2f * Math.PI;
                 dirSin = (float) Math.sin(dir);
