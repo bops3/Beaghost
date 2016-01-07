@@ -18,7 +18,7 @@ public class Obstacle implements Drawable {
     }
 
     private GameManager gm;
-    private float x, y, width, height, drawX, drawY, scale;
+    public final float x, y, width, height;
 
     public Obstacle(float x, float y, float width, float height, GameManager gm) {
         this.x = x;

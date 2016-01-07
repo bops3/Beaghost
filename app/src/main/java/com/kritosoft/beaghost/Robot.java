@@ -2,7 +2,6 @@ package com.kritosoft.beaghost;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.util.Log;
 
 import java.util.Scanner;
 
@@ -10,7 +9,7 @@ public class Robot implements Drawable {
     public static final Paint bodyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     public static final Paint pointerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-    public static final float SIZE = 20;
+    private float radius = 20;
 
     static {
         bodyPaint.setColor(0xff0000ff);
@@ -51,11 +50,11 @@ public class Robot implements Drawable {
 
     @Override
     public void draw(Canvas c) {
-        pointerX = x + SIZE * 3 * dirCos;
-        pointerY = y + SIZE * 3 * dirSin;
+        pointerX = x + radius * 3 * dirCos;
+        pointerY = y + radius * 3 * dirSin;
 
         c.drawLine(x, y, pointerX, pointerY, pointerPaint);
-        c.drawCircle(x, y, SIZE, bodyPaint);
+        c.drawCircle(x, y, radius, bodyPaint);
     }
 
     public void tick(long delayMillis) {
@@ -90,7 +89,7 @@ public class Robot implements Drawable {
         {
             float xW = x + wayChangeThisTick * dirCos;
             float yW = y + wayChangeThisTick * dirSin;
-            if (!gm.isFree(xW, yW)) {
+            if (!gm.isFree(xW, yW, radius)) {
                 dir += Math.PI;
                 dir %= 2f * Math.PI;
                 dirSin = (float) Math.sin(dir);

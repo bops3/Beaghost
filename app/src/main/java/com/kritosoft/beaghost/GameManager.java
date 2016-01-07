@@ -152,7 +152,11 @@ public class GameManager {
         return c;
     }
 
-    public boolean isFree(float xW, float yW) {
+    public boolean isFree(float xW, float yW, float radius) {
+        for (Obstacle o: obstacles) {
+            if (xW + radius <= o.x && xW >= o.x + o.width + radius && yW + radius <= o.y && yW >= o.y + o.height)
+                return false;
+        }
         return true;
     }
 }
