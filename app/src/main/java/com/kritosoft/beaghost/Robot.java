@@ -14,6 +14,10 @@ public class Robot implements Drawable {
     public static final float pi = (float) Math.PI, a = 1.051650213f;
     private static final float[] angles; // angle constants
 
+    float[] points = new float[8];
+    Path drawPath = new Path();
+
+
     static {
         bodyPaint.setColor(0xff0000ff);
         pointerPaint.setColor(0xffccdd00);
@@ -35,10 +39,6 @@ public class Robot implements Drawable {
     private final float fov = (float) (0.25 * Math.PI);
     private final float distA = (float) (Math.sqrt(2) * radius), distB = (float) (Math.sqrt(4.0625) * radius); // TODO anpassen, wenn sich radius ändert
     // TODO synchronizen
-
-    //--drawing--
-    float[] points = new float[8];
-    Path drawPath = new Path();
 
 
     private float[] angleSins = new float[8], angleCosins = new float[8];
