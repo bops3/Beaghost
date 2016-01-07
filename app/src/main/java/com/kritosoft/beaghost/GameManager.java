@@ -43,12 +43,12 @@ public class GameManager {
                 cdv.redraw();
             }
         });
-//        tickClock = new Clock(tickTPS, new Tickable() {
-//            @Override
-//            public void tick(int millisDelta) {
-//                tickAll(millisDelta);
-//            }
-//        });
+        tickClock = new Clock(tickTPS, new Tickable() {
+            @Override
+            public void tick(int millisDelta) {
+                tickAll(millisDelta);
+            }
+        });
         Log.d("GameManager", "GameManager finished.");
     }
 
@@ -127,7 +127,7 @@ public class GameManager {
 
     public void startTicking() {
         drawClock.startTicking();
-//        tickClock.startTicking();
+        tickClock.startTicking();
     }
 
     public void stopTicking() {
@@ -150,5 +150,9 @@ public class GameManager {
             }
         }
         return c;
+    }
+
+    public boolean isFree(float xW, float yW) {
+        return true;
     }
 }
