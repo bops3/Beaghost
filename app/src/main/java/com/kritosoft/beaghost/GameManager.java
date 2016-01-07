@@ -3,6 +3,7 @@ package com.kritosoft.beaghost;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -18,7 +19,7 @@ public class GameManager {
     public static final byte TYPE_OBSTACLE = 0, TYPE_ROBOT = 1;
     public static final String DELIM = " ";
     public static final int drawTPS = 60, tickTPS = 60;
-    int col_b = Color.GREEN;
+    int col_b = 0xff884444;
     private Clock drawClock, tickClock;
     private Obstacle[] obstacles;
     private Stack<Robot> robots = new Stack<>();
@@ -28,7 +29,10 @@ public class GameManager {
     //screenSize unit is different!(depends on scale)
     private int mapSizeX, mapSizeY, offsetX, offsetY, offsetMaxX, offsetMaxY, offsetMinY = 0, offsetMinX = 0, screenX, screenY;
     private float scale;
-    private Thread drawThread, tickThread;
+    private Paint paint_mapBack = new Paint(Paint.ANTI_ALIAS_FLAG);
+    {
+        paint_mapBack.setColor(0xff00aa00);
+    }
 
     public GameManager(Context context) {
         this.context = context;
@@ -154,6 +158,7 @@ public class GameManager {
 //        Log.v("GameManager", "offset:" + offsetX + "," + offsetY);
 
         c.drawColor(col_b);
+        c.drawRect(0,0,mapSizeX,mapSizeY,paint_mapBack);
         synchronized (this) {
             for (Obstacle o : obstacles) {
                 o.draw(c);
