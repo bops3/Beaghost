@@ -32,4 +32,10 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         gm.stopTicking();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        gm.startTicking();
+    }
 }

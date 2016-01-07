@@ -186,10 +186,11 @@ public class GameManager {
         screenX = width;
         screenY = height;
         setMaxOffset();
+        cdv.setMinScale(Math.min(screenX / mapSizeX, screenY / mapSizeY));
     }
 
     private void setMaxOffset() {
-        offsetMaxX = -(mapSizeX - Math.round(screenX / scale));
-        offsetMaxY = -(mapSizeY - Math.round(screenY / scale));
+        offsetMaxX = -(Math.max(mapSizeX - Math.round(screenX / scale), 0));
+        offsetMaxY = -(Math.max(mapSizeY - Math.round(screenY / scale), 0));
     }
 }

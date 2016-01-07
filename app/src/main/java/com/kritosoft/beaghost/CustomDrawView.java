@@ -21,6 +21,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
     private GameManager gm;
     private float deltaX, deltaY;
     private int width, height;
+    private float scaleMin = 0.1f;
 
     private ScaleGestureDetector mScaleDetector;
     private float mScaleFactor = 2f;
@@ -96,7 +97,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         width = getMeasuredWidth();
         height = getMeasuredHeight();
         Log.d("CustomDrawView", "size of view: " + width + ", " + height);
-        gm.setViewSize(width,height);
+        gm.setViewSize(width, height);
         gm.startTicking();
 
     }
@@ -125,6 +126,10 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         }
     }
 
+    public void setMinScale(int minScale) {
+       scaleMin = minScale;
+    }
+
     private class ScaleListener
             extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
@@ -132,7 +137,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
             float sf = detector.getScaleFactor();
             mScaleFactor *= sf;
             // Don't let the object get too small or too large.
-            mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
+            mScaleFactor = Math.max(scaleMin, Math.min(mScaleFactor, 5));
 //            Log.v("CustomDrawView", "scale: " + mScaleFactor);
             gm.setScale(mScaleFactor);
             return true;
