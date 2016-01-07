@@ -39,7 +39,7 @@ public class Robot implements Drawable {
     private float wayChangePerSec = 300;
     //##############
     private float x, y, dir;
-    private float drawX, drawY, scale, pointerX, pointerY;
+    private float pointerX, pointerY;
     private float dirSin, dirCos;
     private GameManager gm;
 
