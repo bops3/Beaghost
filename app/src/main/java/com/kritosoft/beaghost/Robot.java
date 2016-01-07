@@ -3,14 +3,18 @@ package com.kritosoft.beaghost;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.RectF;
 
 import java.util.Scanner;
 
 public class Robot implements Drawable {
     // drawing
+    // farben
     public static final Paint bodyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     public static final Paint pointerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     public static final Paint boxPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    public static final Paint viewFieldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
     public static final float pi = (float) Math.PI, a = 1.051650213f;
     private static final float[] angles; // Winkel für Ecken von Boxen
 
@@ -20,6 +24,7 @@ public class Robot implements Drawable {
         bodyPaint.setColor(0xffaabb77);
         pointerPaint.setColor(0xffaabb77);
         boxPaint.setColor(0xff000000);
+        viewFieldPaint.setColor(0xbb000000);
         pointerPaint.setStrokeWidth(8f);
         // angles init
         angles = new float[8];
@@ -33,7 +38,7 @@ public class Robot implements Drawable {
         angles[7] = 1.75f * pi;
     }
 
-    public final float radius = 15; // TODO Konstante!
+    public final float radius = 15f, viewfieldradius = 60f; // TODO GRÖSSE!
     private final float fov = (float) (0.25 * Math.PI);
     private final float distA = (float) (Math.sqrt(2) * radius), distB = (float) (Math.sqrt(4.0625) * radius); // TODO anpassen, wenn sich radius ändert
     // Entfernungen zu den Ecken der Boxen zum Zeichnen
@@ -50,7 +55,6 @@ public class Robot implements Drawable {
     private float wayChangePerSec = 300; // (-> speed)
     //##############
     private float x, y, dir;
-    private float pointerX, pointerY;
     private float dirSin, dirCos;
     private GameManager gm;
 
@@ -86,9 +90,6 @@ public class Robot implements Drawable {
 
     @Override
     public synchronized void draw(Canvas c) {
-        pointerX = x + radius * 1.3f * dirCos;
-        pointerY = y + radius * 1.3f * dirSin;
-
         // Blöcke links und rechts
         // rechter Block
         drawPath.reset();
@@ -106,8 +107,12 @@ public class Robot implements Drawable {
         drawPath.lineTo(angleCosins[7] * distA + x, angleSins[7] * distA + y);
         drawPath.close();
         c.drawPath(drawPath, boxPaint);
-
-        c.drawLine(x, y, pointerX, pointerY, pointerPaint);
+        // pointer
+        c.drawLine(x, y, x + radius * 1.3f * dirCos, y + radius * 1.3f * dirSin, pointerPaint);
+        // sichtfeld
+        RectF rectF = new RectF(x - viewfieldradius, y - viewfieldradius, x + viewfieldradius, y + viewfieldradius);
+        c.drawArc(rectF, (float) Math.toDegrees(dir - fov / 2), (float) Math.toDegrees(fov), true, viewFieldPaint);
+        // Körper
         c.drawCircle(x, y, radius, bodyPaint);
     }
 
