@@ -9,34 +9,22 @@ public class Robot implements Drawable {
     public static final Paint bodyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     public static final Paint pointerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-    private float radius = 15;
-
     static {
         bodyPaint.setColor(0xff0000ff);
         pointerPaint.setColor(0xffccdd00);
         pointerPaint.setStrokeWidth(5f);
     }
 
-    public float getRadius() {
-        return radius;
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
+    private float radius = 15;
     // nano values for time measuring
     private long millisFromLastDirChange = 0, lastDirChangeMillis, nextDirChangeDelayMillis;
     // movement parameters!#############
     private float maxDCRPS = (float) Math.PI, minDCRPS = (float) Math.PI / 4; // border values for dcrps
     private int minNDCDM = 700, maxNDCDM = 1400; // next direction change delay milliseconds
+    private float minWCPS = 50f, maxWCPS = 550f; // way change per second (-> speed)
     // automatisch erstellte Momentanwerte (aus Bereichen zufällig generiert)
     private float dirChangeRadiantsPerSec = 1f; // direction change radiants per second (dcrps)
-    private float wayChangePerSec = 300;
+    private float wayChangePerSec = 300; // (-> speed)
     //##############
     private float x, y, dir;
     private float pointerX, pointerY;
@@ -60,6 +48,18 @@ public class Robot implements Drawable {
         return new Robot(x, y, dir, gm);
     }
 
+    public float getRadius() {
+        return radius;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
     @Override
     public void draw(Canvas c) {
         pointerX = x + radius * 3 * dirCos;
@@ -72,21 +72,23 @@ public class Robot implements Drawable {
     public void tick(long delayMillis) {
 
         millisFromLastDirChange = System.currentTimeMillis() - lastDirChangeMillis;
-        // Richtungsänderung ändern?
         if (millisFromLastDirChange > nextDirChangeDelayMillis) {
+            // Richtung (un andere Parameter) ändern
             lastDirChangeMillis = System.currentTimeMillis();
             millisFromLastDirChange = 0;
             nextDirChangeDelayMillis = minNDCDM + (long) (Math.random() * (maxNDCDM - minNDCDM));
 
-            // change direction TODO Beträge anpassen!!!
+            // change direction
             dirChangeRadiantsPerSec *= -1;
             if (Math.random() < 0.333d) { // TODO Wahrscheinlichkeiten anpassen..
                 dirChangeRadiantsPerSec = 0;
             } else {
-                dirChangeRadiantsPerSec = (minDCRPS + (float) Math.random() * (maxDCRPS - minDCRPS));
+                dirChangeRadiantsPerSec = minDCRPS + (float) Math.random() * (maxDCRPS - minDCRPS);
                 if (Math.random() < 0.5f)
                     dirChangeRadiantsPerSec *= -1;
             }
+            // change speed
+            wayChangePerSec = minWCPS + (float) Math.random() * (maxWCPS - minWCPS);
         }
         float framerate = 1000 / delayMillis;
         // wenn änderung nötig, dann ändern
