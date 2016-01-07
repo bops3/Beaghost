@@ -89,6 +89,8 @@ public class GameManager {
 
     public void changeOffsetX(float change) {
         offsetX += change/scale;
+        if(offsetX > 0)
+            offsetX = 0;
     }
 
     public float getScale() {
@@ -105,6 +107,8 @@ public class GameManager {
 
     public void changeOffsetY(float change) {
         offsetY += change/scale;
+        if(offsetY > 0)
+            offsetY = 0;
     }
 
     public int getMapSizeX() {
