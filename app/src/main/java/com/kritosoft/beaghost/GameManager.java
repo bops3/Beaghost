@@ -33,7 +33,7 @@ public class GameManager {
         genMapFromFile(R.raw.map1);
         Log.d("GameManager", "creating...");
         cdv = new CustomDrawView(context);
-        Log.d("GameManager","CustomDrawView created!");
+        Log.d("GameManager", "CustomDrawView created!");
         cdv.init(this);
         Log.d("GameManager", "CustomDrawView init finished.");
 
@@ -88,7 +88,7 @@ public class GameManager {
     }
 
     public void changeOffsetX(float change) {
-        offsetX += change;
+        offsetX += change/scale;
     }
 
     public float getScale() {
@@ -104,7 +104,7 @@ public class GameManager {
     }
 
     public void changeOffsetY(float change) {
-        offsetY += change;
+        offsetY += change/scale;
     }
 
     public int getMapSizeX() {
@@ -136,9 +136,10 @@ public class GameManager {
     }
 
     public Canvas drawCanvas(@NonNull Canvas c) {
-        c.translate(offsetX, offsetY);
+
         c.scale(scale, scale);
-        Log.v("GameManager", "offset:" + offsetX + "," + offsetY);
+        c.translate(offsetX , offsetY );
+//        Log.v("GameManager", "offset:" + offsetX + "," + offsetY);
 
         c.drawColor(col_b);
         synchronized (this) {
