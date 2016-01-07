@@ -31,18 +31,23 @@ public class Robot implements Drawable {
         angles[7] = 1.75f * pi;
     }
 
-    private final float fov = (float) (0.25 * Math.PI);
-
-    private float radius = 15;
     public final float radius = 15; // TODO Konstante!
+    private final float fov = (float) (0.25 * Math.PI);
     private final float distA = (float) (Math.sqrt(2) * radius), distB = (float) (Math.sqrt(4.0625) * radius); // TODO anpassen, wenn sich radius ändert
+    // TODO synchronizen
+
+    //--drawing--
+    float[] points = new float[8];
+    Path drawPath = new Path();
+
+
     private float[] angleSins = new float[8], angleCosins = new float[8];
     // nano values for time measuring
     private long millisFromLastDirChange = 0, lastDirChangeMillis, nextDirChangeDelayMillis;
     // movement parameters!#############
     private float maxDCRPS = (float) Math.PI, minDCRPS = (float) Math.PI / 4; // border values for dcrps
     private int minNDCDM = 700, maxNDCDM = 1400; // next direction change delay milliseconds
-    private float minWCPS = 0f, maxWCPS = 0f; // way change per second (-> speed)
+    private float minWCPS = 30f, maxWCPS = 700f; // way change per second (-> speed)
     // automatisch erstellte Momentanwerte (aus Bereichen zufällig generiert)
     private float dirChangeRadiantsPerSec = 1f; // direction change radiants per second (dcrps)
     private float wayChangePerSec = 300; // (-> speed)
@@ -81,47 +86,46 @@ public class Robot implements Drawable {
     public float getY() {
         return y;
     }
-// TODO synchronizen
+
     @Override
     public void draw(Canvas c) {
         pointerX = x + radius * 1.3f * dirCos;
         pointerY = y + radius * 1.3f * dirSin;
 
         // Blöcke links und rechts
-        float[] pp = new float[8];
-        Path p = new Path();
+
         // rechter Block
-        pp[0] = angleCosins[0]*distA + x;
-        pp[1] = angleSins[0] * distA + y;
-        pp[2] = angleCosins[1] * distB + x;
-        pp[3] = angleSins[1] * distB + y;
-        pp[4] = angleCosins[2] * distB + x;
-        pp[5] = angleSins[2] * distB + y;
-        pp[6] = angleCosins[3] * distA + x;
-        pp[7] = angleSins[3] * distA + y;
-        p.reset();
-        p.moveTo(pp[0], pp[1]);
-        p.lineTo(pp[2], pp[3]);
-        p.lineTo(pp[4], pp[5]);
-        p.lineTo(pp[6], pp[7]);
-        p.close();
-        c.drawPath(p, boxPaint);
+        points[0] = angleCosins[0] * distA + x;
+        points[1] = angleSins[0] * distA + y;
+        points[2] = angleCosins[1] * distB + x;
+        points[3] = angleSins[1] * distB + y;
+        points[4] = angleCosins[2] * distB + x;
+        points[5] = angleSins[2] * distB + y;
+        points[6] = angleCosins[3] * distA + x;
+        points[7] = angleSins[3] * distA + y;
+        drawPath.reset();
+        drawPath.moveTo(points[0], points[1]);
+        drawPath.lineTo(points[2], points[3]);
+        drawPath.lineTo(points[4], points[5]);
+        drawPath.lineTo(points[6], points[7]);
+        drawPath.close();
+        c.drawPath(drawPath, boxPaint);
         // linker Block
-        pp[0] = angleCosins[4]*distA + x;
-        pp[1] = angleSins[4] * distA + y;
-        pp[2] = angleCosins[5] * distB + x;
-        pp[3] = angleSins[5] * distB + y;
-        pp[4] = angleCosins[6] * distB + x;
-        pp[5] = angleSins[6] * distB + y;
-        pp[6] = angleCosins[7] * distA + x;
-        pp[7] = angleSins[7] * distA + y;
-        p.reset();
-        p.moveTo(pp[0], pp[1]);
-        p.lineTo(pp[2], pp[3]);
-        p.lineTo(pp[4], pp[5]);
-        p.lineTo(pp[6], pp[7]);
-        p.close();
-        c.drawPath(p, boxPaint);
+        points[0] = angleCosins[4] * distA + x;
+        points[1] = angleSins[4] * distA + y;
+        points[2] = angleCosins[5] * distB + x;
+        points[3] = angleSins[5] * distB + y;
+        points[4] = angleCosins[6] * distB + x;
+        points[5] = angleSins[6] * distB + y;
+        points[6] = angleCosins[7] * distA + x;
+        points[7] = angleSins[7] * distA + y;
+        drawPath.reset();
+        drawPath.moveTo(points[0], points[1]);
+        drawPath.lineTo(points[2], points[3]);
+        drawPath.lineTo(points[4], points[5]);
+        drawPath.lineTo(points[6], points[7]);
+        drawPath.close();
+        c.drawPath(drawPath, boxPaint);
 
         c.drawLine(x, y, pointerX, pointerY, pointerPaint);
         c.drawCircle(x, y, radius, bodyPaint);
