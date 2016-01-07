@@ -24,7 +24,7 @@ public class GameManager {
     private Stack<Robot> robots = new Stack<>();
     private Context context;
     private CustomDrawView cdv;
-    private int mapSizeX, mapSizeY, offsetX, offsetY, offsetMaxX, offsetMaxY, offsetMinY, offsetMinX;
+    private int mapSizeX, mapSizeY, offsetX, offsetY, offsetMaxX, offsetMaxY, offsetMinY = 0, offsetMinX = 0, screenX, screenY;
     private float scale;
     private Thread drawThread, tickThread;
 
@@ -89,8 +89,10 @@ public class GameManager {
 
     public void changeOffsetX(float change) {
         offsetX += change / scale;
-        if (offsetX > offsetMinX)
+        if (offsetX > offsetMinX)//offset: -123, offsetMinx = 0
             offsetX = offsetMinX;
+        else if (offsetX < offsetMaxX)//offset: -123, offsetMax : -1000
+            offsetX = offsetMaxX;
     }
 
     public float getScale() {
@@ -109,6 +111,8 @@ public class GameManager {
         offsetY += change / scale;
         if (offsetY > offsetMinY)
             offsetY = offsetMinY;
+        else if (offsetY < offsetMaxY)//offset: -123, offsetMax : -1000
+            offsetY = offsetMaxY;
 
     }
 
@@ -164,5 +168,16 @@ public class GameManager {
                 return false;
         }
         return true;
+    }
+
+    public void setViewSize(int width, int height) {
+        screenX = width;
+        screenY = height;
+        setMaxOffset();
+    }
+
+    private void setMaxOffset() {
+        offsetMaxX = -(Math.round(mapSizeX * scale) - screenX);
+        offsetMaxY = -(Math.round(mapSizeY * scale) - screenY);
     }
 }
