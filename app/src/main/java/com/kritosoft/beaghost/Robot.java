@@ -1,29 +1,28 @@
 package com.kritosoft.beaghost;
 
 import android.graphics.Canvas;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.RadialGradient;
 import android.graphics.RectF;
+import android.graphics.Shader;
 
 import java.util.Scanner;
 
 public class Robot implements Drawable {
-    // drawing
+    // ZEICHNEN +++++++++++++++++++++++++++++++++++++++++++++++
     // farben
     public static final Paint bodyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    public static final Paint pointerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     public static final Paint boxPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    public static final Paint viewFieldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    public final Paint viewFieldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public static final float pi = (float) Math.PI, a = 1.051650213f;
     private static final float[] angles; // Winkel für Ecken von Boxen
 
     static {
-        bodyPaint.setColor(0xffaabb77);
-        pointerPaint.setColor(0xffaabb77);
+        bodyPaint.setColor(0xff990000);
         boxPaint.setColor(0xff000000);
-        viewFieldPaint.setColor(0xbb000000);
-        pointerPaint.setStrokeWidth(8f);
         // angles init
         angles = new float[8];
         angles[0] = pi / 4;
@@ -36,12 +35,19 @@ public class Robot implements Drawable {
         angles[7] = 1.75f * pi;
     }
 
-    public final float radius = 15f, viewfieldradius = 60f; // TODO GRÖSSE!
+    public final float radius = 15f; // TODO GRÖSSE!
+
+    // Sichtfeld
+    public final float viewfieldradius = 400f;
+
     private final float fov = (float) (0.25 * Math.PI);
     private final float distA = (float) (Math.sqrt(2) * radius), distB = (float) (Math.sqrt(4.0625) * radius); // TODO anpassen, wenn sich radius ändert
-    Path drawPath = new Path(); // wiederverwendet für das Zeichnen der Boxen
+
+    private Path drawPath = new Path(); // wiederverwendet für das Zeichnen der Boxen
     // Entfernungen zu den Ecken der Boxen zum Zeichnen
     private float[] angleSins = new float[8], angleCosins = new float[8];
+
+    // BEWEGUNG ++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // nano values for time measuring
     private long millisFromLastDirChange = 0, lastDirChangeMillis, nextDirChangeDelayMillis;
     // movement parameters!#############
@@ -62,6 +68,7 @@ public class Robot implements Drawable {
         this.dir = dir;
         changeDir(0f);
         this.gm = gm;
+        viewFieldPaint.setStyle(Paint.Style.FILL);
     }
 
     public static Robot createFromFile(String line, GameManager gm) {
@@ -105,13 +112,18 @@ public class Robot implements Drawable {
         drawPath.lineTo(angleCosins[7] * distA + x, angleSins[7] * distA + y);
         drawPath.close();
         c.drawPath(drawPath, boxPaint);
-        // pointer
-        c.drawLine(x, y, x + radius * 1.3f * dirCos, y + radius * 1.3f * dirSin, pointerPaint);
         // sichtfeld
-        RectF rectF = new RectF(x - viewfieldradius, y - viewfieldradius, x + viewfieldradius, y + viewfieldradius);
-        c.drawArc(rectF, (float) Math.toDegrees(dir - fov / 2), (float) Math.toDegrees(fov), true, viewFieldPaint);
+        drawViewField(fov / 2, fov, c);
         // Körper
         c.drawCircle(x, y, radius, bodyPaint);
+    }
+
+    private void drawViewField(float angleFrom, float angle, Canvas c) {
+        // Sichtfeldfarbverlauf an Winkel und Position anpassen
+        RadialGradient gradient = new RadialGradient(x, y, viewfieldradius, new int[] { 0xccffffff, 0x00000000 }, null, Shader.TileMode.CLAMP);
+        viewFieldPaint.setShader(gradient);
+        RectF rectF = new RectF(x - viewfieldradius, y - viewfieldradius, x + viewfieldradius, y + viewfieldradius);
+        c.drawArc(rectF, (float) Math.toDegrees(dir - angleFrom), (float) Math.toDegrees(angle), true, viewFieldPaint);
     }
 
     public synchronized void tick(long delayMillis) {
@@ -159,6 +171,7 @@ public class Robot implements Drawable {
         dirSin = (float) Math.sin(dir);
         dirCos = (float) Math.cos(dir);
 
+        // Werte für Boxen an den Seiten an Winkel anpassen
         for (int i = 0; i < angles.length; i++) {
             float actangle = dir + angles[i];
             actangle %= 2 * pi;

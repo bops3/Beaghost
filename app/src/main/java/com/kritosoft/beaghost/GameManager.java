@@ -31,7 +31,7 @@ public class GameManager {
     private Paint paint_mapBack = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     {
-        paint_mapBack.setColor(0xff00aa00);
+        paint_mapBack.setColor(0xff111111);
     }
 
     public GameManager(Context context) {
