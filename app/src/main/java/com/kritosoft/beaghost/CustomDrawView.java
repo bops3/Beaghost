@@ -126,7 +126,7 @@ public class CustomDrawView extends SurfaceView implements SurfaceHolder.Callbac
         }
     }
 
-    public void setMinScale(int minScale) {
+    public void setMinScale(float minScale) {
         Log.d("CustomDrawView", "minScale: " + minScale);
         scaleMin = minScale;
     }

@@ -2,7 +2,6 @@ package com.kritosoft.beaghost;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -30,6 +29,7 @@ public class GameManager {
     private int mapSizeX, mapSizeY, offsetX, offsetY, offsetMaxX, offsetMaxY, offsetMinY = 0, offsetMinX = 0, screenX, screenY;
     private float scale;
     private Paint paint_mapBack = new Paint(Paint.ANTI_ALIAS_FLAG);
+
     {
         paint_mapBack.setColor(0xff00aa00);
     }
@@ -158,7 +158,7 @@ public class GameManager {
 //        Log.v("GameManager", "offset:" + offsetX + "," + offsetY);
 
         c.drawColor(col_b);
-        c.drawRect(0,0,mapSizeX,mapSizeY,paint_mapBack);
+        c.drawRect(0, 0, mapSizeX, mapSizeY, paint_mapBack);
         synchronized (this) {
             for (Obstacle o : obstacles) {
                 o.draw(c);
@@ -191,7 +191,8 @@ public class GameManager {
         screenX = width;
         screenY = height;
         setMaxOffset();
-        cdv.setMinScale(Math.min(screenX / mapSizeX, screenY / mapSizeY));
+        Log.d("GameManager", "screen (" + screenX + ", " + screenY + "), map (" + mapSizeX + ", " + mapSizeY + ")");
+        cdv.setMinScale(Math.min(1f*screenX / mapSizeX, 1f*screenY / mapSizeY));
     }
 
     private void setMaxOffset() {
