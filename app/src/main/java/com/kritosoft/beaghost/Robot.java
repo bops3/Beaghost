@@ -9,7 +9,7 @@ public class Robot implements Drawable {
     public static final Paint bodyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     public static final Paint pointerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-    private float radius = 20;
+    private float radius = 15;
 
     static {
         bodyPaint.setColor(0xff0000ff);
