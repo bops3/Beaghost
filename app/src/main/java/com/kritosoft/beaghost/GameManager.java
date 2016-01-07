@@ -88,8 +88,8 @@ public class GameManager {
     }
 
     public void changeOffsetX(float change) {
-        offsetX += change/scale;
-        if(offsetX > 0)
+        offsetX += change / scale;
+        if (offsetX > 0)
             offsetX = 0;
     }
 
@@ -106,8 +106,8 @@ public class GameManager {
     }
 
     public void changeOffsetY(float change) {
-        offsetY += change/scale;
-        if(offsetY > 0)
+        offsetY += change / scale;
+        if (offsetY > 0)
             offsetY = 0;
     }
 
@@ -142,7 +142,7 @@ public class GameManager {
     public Canvas drawCanvas(@NonNull Canvas c) {
 
         c.scale(scale, scale);
-        c.translate(offsetX , offsetY );
+        c.translate(offsetX, offsetY);
 //        Log.v("GameManager", "offset:" + offsetX + "," + offsetY);
 
         c.drawColor(col_b);
@@ -157,11 +157,19 @@ public class GameManager {
         return c;
     }
 
-    public boolean isFree(float xW, float yW, float radius) {
-        for (Obstacle o: obstacles) {
-            if (xW + radius >= o.x && xW - radius <= o.x + o.width && yW + radius >= o.y && yW - radius <= o.y + o.height)
-                Log.d("Collisiondetection", "Collision!");
+    public boolean isFree(float xW, float yW, Robot i) {
+        for (Obstacle o : obstacles) {
+            if ((xW + i.getRadius() >= o.x && xW - i.getRadius() <= o.x + o.width) && (yW + i.getRadius() >= o.y && yW - i.getRadius() <= o.y + o.height)) {
                 return false;
+            }
+        }
+        for (Robot r : robots) {
+            if (r == i)
+                continue;
+            float dx = xW - r.getX(), dy = yW - r.getY();
+            if (Math.sqrt((double) (dx * dx + dy * dy)) <= r.getRadius() + i.getRadius()) {
+                return false;
+            }
         }
         return true;
     }

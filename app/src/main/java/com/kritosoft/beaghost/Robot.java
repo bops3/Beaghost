@@ -17,6 +17,18 @@ public class Robot implements Drawable {
         pointerPaint.setStrokeWidth(5f);
     }
 
+    public float getRadius() {
+        return radius;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
     // nano values for time measuring
     private long millisFromLastDirChange = 0, lastDirChangeMillis, nextDirChangeDelayMillis;
     // movement parameters!#############
@@ -88,7 +100,7 @@ public class Robot implements Drawable {
         {
             float xW = x + wayChangeThisTick * dirCos;
             float yW = y + wayChangeThisTick * dirSin;
-            if (!gm.isFree(xW, yW, radius)) { // Weg ist nicht frei, also umdrehen
+            if (!gm.isFree(xW, yW, this)) { // Weg ist nicht frei, also umdrehen
                 dir += Math.PI;
                 dir %= 2f * Math.PI;
                 dirSin = (float) Math.sin(dir);
