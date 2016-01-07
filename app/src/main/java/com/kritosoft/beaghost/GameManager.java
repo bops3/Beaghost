@@ -19,7 +19,7 @@ public class GameManager {
     public static final byte TYPE_OBSTACLE = 0, TYPE_ROBOT = 1;
     public static final String DELIM = " ";
     public static final int drawTPS = 60, tickTPS = 60;
-    int col_b = 0xff884444;
+    int col_b = 0xff000000;
     private Clock drawClock, tickClock;
     private Obstacle[] obstacles;
     private Stack<Robot> robots = new Stack<>();
