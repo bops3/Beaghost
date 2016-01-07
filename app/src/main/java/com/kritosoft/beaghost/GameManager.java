@@ -24,7 +24,7 @@ public class GameManager {
     private Stack<Robot> robots = new Stack<>();
     private Context context;
     private CustomDrawView cdv;
-    private int mapSizeX, mapSizeY, offsetX, offsetY;
+    private int mapSizeX, mapSizeY, offsetX, offsetY, offsetMaxX, offsetMaxY;
     private float scale;
     private Thread drawThread, tickThread;
 
@@ -88,7 +88,10 @@ public class GameManager {
     }
 
     public void changeOffsetX(float change) {
-        offsetX += change/scale;
+        offsetX += change / scale;
+        if (offsetX < 0)
+            offsetX = 0;
+        Log.v("GameManager","offsetX: "+offsetX);
     }
 
     public float getScale() {
@@ -104,7 +107,11 @@ public class GameManager {
     }
 
     public void changeOffsetY(float change) {
-        offsetY += change/scale;
+        offsetY += change / scale;
+        if (offsetY < 0)
+            offsetY = 0;
+//        else if (offsetY > mapSizeY-screenY)
+
     }
 
     public int getMapSizeX() {
@@ -138,7 +145,7 @@ public class GameManager {
     public Canvas drawCanvas(@NonNull Canvas c) {
 
         c.scale(scale, scale);
-        c.translate(offsetX , offsetY );
+        c.translate(offsetX, offsetY);
 //        Log.v("GameManager", "offset:" + offsetX + "," + offsetY);
 
         c.drawColor(col_b);
@@ -154,7 +161,7 @@ public class GameManager {
     }
 
     public boolean isFree(float xW, float yW, float radius) {
-        for (Obstacle o: obstacles) {
+        for (Obstacle o : obstacles) {
             if (xW + radius <= o.x && xW >= o.x + o.width + radius && yW + radius <= o.y && yW >= o.y + o.height)
                 return false;
         }
