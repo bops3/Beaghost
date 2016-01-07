@@ -44,7 +44,7 @@ public class Robot implements Drawable {
     // movement parameters!#############
     private float maxDCRPS = (float) Math.PI, minDCRPS = (float) Math.PI / 4; // border values for dcrps
     private int minNDCDM = 700, maxNDCDM = 1400; // next direction change delay milliseconds
-    private float minWCPS = 30f, maxWCPS = 700f; // way change per second (-> speed)
+    private float minWCPS = 30f, maxWCPS = 400f; // way change per second (-> speed)
     // automatisch erstellte Momentanwerte (aus Bereichen zufällig generiert)
     private float dirChangeRadiantsPerSec = 1f; // direction change radiants per second (dcrps)
     private float wayChangePerSec = 300; // (-> speed)
@@ -58,7 +58,7 @@ public class Robot implements Drawable {
         this.x = x;
         this.y = y;
         this.dir = dir;
-        dirChanged();
+        changeDir(0f);
         this.gm = gm;
     }
 
@@ -135,18 +135,14 @@ public class Robot implements Drawable {
         float framerate = 1000 / delayMillis;
         // wenn änderung nötig, dann ändern
         if (dirChangeRadiantsPerSec != 0) {
-            dir += dirChangeRadiantsPerSec / framerate;
-            dir %= 2f * Math.PI;
-            dirChanged();
+            changeDir(dirChangeRadiantsPerSec / framerate);
         }
         float wayChangeThisTick = wayChangePerSec / framerate;
         {
             float xW = x + wayChangeThisTick * dirCos;
             float yW = y + wayChangeThisTick * dirSin;
             if (!gm.isFree(xW, yW, this)) { // Weg ist nicht frei, also umdrehen
-                dir += Math.PI;
-                dir %= 2f * Math.PI;
-                dirChanged();
+                changeDir(pi);
             }
         }
         // bewegen
@@ -154,7 +150,9 @@ public class Robot implements Drawable {
         y += wayChangeThisTick * dirSin;
     }
 
-    private void dirChanged() {
+    private void changeDir(float value) {
+        dir += value;
+        dir %= 2 * pi;
         dirSin = (float) Math.sin(dir);
         dirCos = (float) Math.cos(dir);
 
