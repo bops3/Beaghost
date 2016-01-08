@@ -160,6 +160,8 @@ public abstract class AbstractRobot implements Drawable {
             aktBestSPunkt = returnArray[1];
             aktT = tempTouch;
             aktI = tempIntersect;
+            if(i == 0)
+                continue;
             if (lastI != null) {
                 if (lastI == aktI)
                     //zweimal schneiden
