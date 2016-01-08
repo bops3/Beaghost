@@ -1,7 +1,5 @@
 package com.kritosoft.beaghost;
 
-import android.util.Log;
-
 interface Tickable {
     public void tick(int millisDelta);
 }
@@ -60,12 +58,13 @@ public class Clock implements Runnable {
         } catch (Exception e) {
             if (!(e instanceof InterruptedException))
                 e.printStackTrace();
+            thread.interrupt();
         }
     }
 
     public void startTicking() {
 
-        if (thread == null || !thread.isAlive()) {
+        if (thread == null || !thread.isAlive() || thread.isInterrupted()) {
             thread = new Thread(this);
             thread.start();
         }
