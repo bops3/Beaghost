@@ -1,18 +1,11 @@
 package com.kritosoft.beaghost;
 
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.RadialGradient;
-import android.graphics.RectF;
-import android.graphics.Shader;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Scanner;
 
-public class Robot extends AbstractRobot {
+public class Robot extends SimpleRobot {
     // BEWEGUNG ++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // nano values for time measuring
     private long millisFromLastDirChange = 0, lastDirChangeMillis, nextDirChangeDelayMillis;
@@ -26,7 +19,7 @@ public class Robot extends AbstractRobot {
     private float dirChangeRadiantsPerSec = 1f; // direction change radiants per second (dcrps)
 
     public Robot(float x, float y, float dir, GameManager gm) {
-        super(x, y, dir, gm);
+        super(x, y, dir, gm, 0xff990000);
     }
 
     public static Robot createFromFile(String line, GameManager gm) {
@@ -40,7 +33,6 @@ public class Robot extends AbstractRobot {
     }
 
     public synchronized void tick(long delayMillis) {
-
         millisFromLastDirChange = System.currentTimeMillis() - lastDirChangeMillis;
         if (millisFromLastDirChange > nextDirChangeDelayMillis) {
             // Richtung (un andere Parameter) ändern
