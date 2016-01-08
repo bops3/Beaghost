@@ -9,8 +9,7 @@ public class Robot extends SimpleRobot {
     // BEWEGUNG ++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // nano values for time measuring
     private long millisFromLastDirChange = 0, lastDirChangeMillis, nextDirChangeDelayMillis;
-    //### temp vars #######
-    private float tempAngle;
+
     // movement parameters!#############
     private float maxDCRPS = (float) Math.PI, minDCRPS = (float) Math.PI / 4; // border values for dcrps
     private int minNDCDM = 700, maxNDCDM = 1400; // next direction change delay milliseconds
@@ -70,100 +69,6 @@ public class Robot extends SimpleRobot {
         y += wayChangeThisTick * getDirSin();
     }
 
-
-    private void drawIntersectedField() {
-        LinkedList<ObstacleDirBundle> list = new LinkedList<>();
-        for (Obstacle o : gm.getObstacles()) {
-            if (isInView(o.x, o.y))
-                list.add(new ObstacleDirBundle(o, tempAngle, o.x, o.y));
-            if (isInView(o.x + o.width, o.y))
-                list.add(new ObstacleDirBundle(o, tempAngle, o.x + o.width, o.y));
-            if (isInView(o.x, o.y + o.height))
-                list.add(new ObstacleDirBundle(o, tempAngle, o.x, o.y + o.height));
-            if (isInView(o.x + o.width, o.y + o.height))
-                list.add(new ObstacleDirBundle(o, tempAngle, o.x + o.width, o.y + o.height));
-
-        }
-        Collections.sort(list, new Comparator<ObstacleDirBundle>() {
-            @Override
-            public int compare(ObstacleDirBundle lhs, ObstacleDirBundle rhs) {
-                return (int) Math.signum(lhs.getDir() - rhs.getDir());
-            }
-        });
-
-        for (ObstacleDirBundle odb : list) {
-            float pX = odb.getPointX();
-            float pY = odb.getPointY();
-            float m = getGradient(pX, pY);
-            //ray tracen, wenn hit in bereich dann dreieck, sonst bogen
-        }
-
-    }
-
-    public synchronized boolean sees(Robot r) {
-        float m = getGradient(r.getX(), r.getY());
-        float angleToR = getAngle(m);
-        //Liegt der Punkt im Sichtfeld
-        if (isAngleInFOV(angleToR))
-            //Robot liegt im Sichtfeld, es muss geprüft werden, ob hindernisse dazwischen liegen
-            for (Obstacle o : gm.getObstacles())
-                //Es reicht 3 Kanten zu überprüfen, da immer mind 2 geschnitten werden
-                if (sHLC(m, o.y, o.x, o.width) || sHLC(m, o.y + o.height, o.x, o.width) || sVLC(m, o.x, o.y, o.height))
-                    return false;
-
-        return true;
-    }
-
-    private boolean isAngleInFOV(float angle) {
-        return getDir() - fov / 2 < angle && getDir() + fov / 2 > angle;
-    }
-
-    private float getGradient(float x, float y) {
-        return (y - this.y) / (x - this.x);
-    }
-
-    private float getAngle(float gradient) {
-        tempAngle = (float) Math.atan(gradient);
-        return tempAngle;
-    }
-
-    private float getDistance(float x, float y) {
-        return (float) Math.sqrt(Math.pow(x - this.x, 2) + Math.pow(y - this.y, 2));
-    }
-
-    private boolean isInView(float x, float y) {
-        return isAngleInFOV(getAngle(getGradient(x, y))) && getDistance(x, y) <= viewfieldradius;
-    }
-
-    /**
-     * simple horizontal line collision
-     *
-     * @return if they intersect
-     */
-    private boolean sHLC(float gradientA, float yB, float xB, float widthB) {
-        /**horizontal col. detection:
-         * A: line: y=m*x
-         * B: y = a
-         * => x = a/m, wenn x auf der Seite liegt, dann Kollision
-         */
-        float sx = yB / gradientA;
-        return sx > xB && sx < xB + widthB;
-    }
-
-    /**
-     * simple vertical line collision
-     *
-     * @return if they intersect
-     */
-    private boolean sVLC(float gradientA, float xB, float yB, float heightB) {
-        /**vertical col. detection:
-         * A: line: y=m*x
-         * B: x = a
-         * => y = m*a, wenn y auf der Seite liegt, dann Kollision
-         */
-        float sy = xB * gradientA;
-        return sy > yB && sy < yB + heightB;
-    }
 
 }
 
