@@ -98,7 +98,7 @@ public abstract class AbstractRobot implements Drawable {
         });
         //ray durch erste Sichtfeldbegrenzung
         float mRay = getGradientfromAngle(dir - fov / 2);
-        getFirstHit(mRay, list);
+        getFirstHitInRadius(mRay, list);
 
         for (ObstacleDirBundle odb : list) {
             float pX = odb.getPointX();
@@ -109,13 +109,13 @@ public abstract class AbstractRobot implements Drawable {
 
     }
 
-    private void getFirstHit(float mRay, LinkedList<ObstacleDirBundle> list) {
+    private void getFirstHitInRadius(float mRay, LinkedList<ObstacleDirBundle> list) {
         Obstacle obs = null;
         LinkedList<float[]> sPunkteList;
         float[] bestSPunkt = null;
         boolean rayHitsST = false;
         boolean rayHits2T = false;
-        float smallestDis = Float.MAX_VALUE;
+        float smallestDis = viewfieldradius;
         float newDis;
         for (ObstacleDirBundle odb : list) {
             if (odb.getO() == obs)
