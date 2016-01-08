@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d("MainActivity","STOP!!");
         stopped = true;
         gm.stopTicking();
     }
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("MainActivity", "resume");
         if (stopped) {
             stopped = false;
             gm.startTicking();
