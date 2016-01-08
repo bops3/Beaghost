@@ -1,6 +1,11 @@
 package com.kritosoft.beaghost;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.RadialGradient;
+import android.graphics.RectF;
+import android.graphics.Shader;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,6 +14,8 @@ import java.util.LinkedList;
 public abstract class AbstractRobot implements Drawable {
     // STATIC ===========================================
     public final static float pi = (float) Math.PI, a = 1.051650213f;
+    public final Paint viewFieldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
     // ===================================================
     // GRÖSSEN +++++++++++++++++++++++
     public final float radius = 15f; // TODO GRÖSSE!
@@ -75,16 +82,32 @@ public abstract class AbstractRobot implements Drawable {
 
     public abstract void draw(Canvas c);
 
-    private void drawCircSector(float angel1, float angel2) {
+    protected void drawViewField(float angleFrom, float angle, Canvas c) {
+        // Sichtfeldfarbverlauf an Winkel und Position anpassen
+        RadialGradient gradient = new RadialGradient(x, y, viewfieldradius, new int[]{0xccffffff, 0x00000000}, null, Shader.TileMode.CLAMP);
+        viewFieldPaint.setShader(gradient);
+        drawIntersectedField(c);
+    }
+
+    private void drawCircSector(float angel1, float angel2, Canvas c) {
+
+        RectF rectF = new RectF(x - viewfieldradius, y - viewfieldradius, x + viewfieldradius, y + viewfieldradius);
+        c.drawArc(rectF, (float) Math.toDegrees(angel1), (float) Math.toDegrees(angel2), true, viewFieldPaint);
+    }
+
+    private void drawTrinangle(float x0, float y0, float x1, float y1, Canvas c) {
+        Path p = new Path();
+        p.reset();
+        p.moveTo(x0, y0);
+        p.lineTo(x1, y1);
+        p.lineTo(x, y);
+        p.close();
+        c.drawPath(p, viewFieldPaint);
 
     }
 
-    private void drawTrinangle(float x0, float y0, float x1, float y1) {
 
-    }
-
-
-    private void drawIntersectedField() {
+    private void drawIntersectedField(Canvas c) {
         LinkedList<ObstacleDirBundle> list = new LinkedList<>();
         for (Obstacle o : gm.getObstacles()) {
             if (isInView(o.x, o.y))
@@ -112,8 +135,8 @@ public abstract class AbstractRobot implements Drawable {
         float[] lastBestBPunkt;
         float[] lastBestSPunkt;
 
-        Obstacle lastT = null;
-        Obstacle lastI = null;
+        Obstacle lastT;
+        Obstacle lastI;
         Obstacle aktT = tempTouch;
         Obstacle aktI = tempIntersect;
         float lastAngel;
@@ -137,18 +160,18 @@ public abstract class AbstractRobot implements Drawable {
             if (lastI != null) {
                 if (lastI == aktI)
                     //zweimal schneiden
-                    drawTrinangle(lastBestSPunkt[0], lastBestSPunkt[1], aktBestSPunkt[0], aktBestSPunkt[1]);
-                else if(aktI == null)
+                    drawTrinangle(lastBestSPunkt[0], lastBestSPunkt[1], aktBestSPunkt[0], aktBestSPunkt[1], c);
+                else if (aktI == null)
                     //intersect, dann touch
-                    drawTrinangle(lastBestSPunkt[0], lastBestSPunkt[1], aktBestBPunkt[0], aktBestBPunkt[1]);
+                    drawTrinangle(lastBestSPunkt[0], lastBestSPunkt[1], aktBestBPunkt[0], aktBestBPunkt[1], c);
 
-            } else if (lastT != null){
+            } else if (lastT != null) {
                 if (aktI == null)
                     //nur touch
-                    drawCircSector(lastAngel, aktAngel);
+                    drawCircSector(lastAngel, aktAngel, c);
                 else
-                //touch, dann intersect
-                    drawTrinangle(lastBestBPunkt[0], lastBestBPunkt[1], aktBestSPunkt[0], aktBestSPunkt[1]);
+                    //touch, dann intersect
+                    drawTrinangle(lastBestBPunkt[0], lastBestBPunkt[1], aktBestSPunkt[0], aktBestSPunkt[1], c);
             }
             //ray tracen, wenn hit in bereich dann dreieck, sonst bogen
         }
@@ -212,9 +235,6 @@ public abstract class AbstractRobot implements Drawable {
     }
 
     /**
-     * @param o
-     * @param x
-     * @param y
      * @return -1: no corner, 0 top-left, 1 top-right, 2 bot-left, 3 bot-right
      */
     private int whichCornerPoint(Obstacle o, float x, float y) {

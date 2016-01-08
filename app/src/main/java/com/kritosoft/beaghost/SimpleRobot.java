@@ -28,7 +28,6 @@ public abstract class SimpleRobot extends AbstractRobot {
     // farben
     public final Paint bodyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     public final Paint boxPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    public final Paint viewFieldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     // -----------------------------------------------------------------------
     private final float distA = (float) (Math.sqrt(2) * radius), distB = (float) (Math.sqrt(4.0625) * radius); // TODO anpassen, wenn sich radius ändert
 
@@ -70,13 +69,7 @@ public abstract class SimpleRobot extends AbstractRobot {
         c.drawCircle(x, y, radius, bodyPaint);
     }
 
-    protected void drawViewField(float angleFrom, float angle, Canvas c) {
-        // Sichtfeldfarbverlauf an Winkel und Position anpassen
-        RadialGradient gradient = new RadialGradient(x, y, viewfieldradius, new int[]{0xccffffff, 0x00000000}, null, Shader.TileMode.CLAMP);
-        viewFieldPaint.setShader(gradient);
-        RectF rectF = new RectF(x - viewfieldradius, y - viewfieldradius, x + viewfieldradius, y + viewfieldradius);
-        c.drawArc(rectF, (float) Math.toDegrees(getDir() - angleFrom), (float) Math.toDegrees(angle), true, viewFieldPaint);
-    }
+
 
     @Override
     protected void changeDir(float change) {
