@@ -153,11 +153,13 @@ public class GameManager {
     public void startTicking() {
         drawClock.startTicking();
         tickClock.startTicking();
+        Log.d("GameManager", "StartTicking");
     }
 
     public void stopTicking() {
         drawClock.stopTicking();
         tickClock.stopTicking();
+        Log.d("GameManager", "StopTicking");
     }
 
     public Canvas drawCanvas(@NonNull Canvas c) {
@@ -169,6 +171,7 @@ public class GameManager {
         drawBackground(c);
         // draw objects
 
+
         for (Robot r : robots) {
             r.draw(c);
         }
@@ -179,7 +182,7 @@ public class GameManager {
     private void drawBackground(Canvas c) {
         // draw map background
         c.drawColor(col_b);
-      c.drawRect(0, 0, mapWidth, mapHeight, paint_mapBack);
+        c.drawRect(0, 0, mapWidth, mapHeight, paint_mapBack);
         // draw pre-drawn background bitmap
 //        c.drawBitmap(background, 0, 0, null);
     }
