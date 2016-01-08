@@ -14,7 +14,6 @@ import java.util.LinkedList;
 public abstract class AbstractRobot implements Drawable {
     // STATIC ===========================================
     public final static float pi = (float) Math.PI, a = 1.051650213f;
-    public final Paint viewFieldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     // ===================================================
     // GRÖSSEN +++++++++++++++++++++++
@@ -22,6 +21,9 @@ public abstract class AbstractRobot implements Drawable {
     public final float fov = (float) (0.25 * Math.PI);
     // Sichtfeld
     public final float viewfieldradius = 400f;
+    // SICHTFELD ZEICHNEN &&&&&&&&&&&&&&&&&&&
+    public final int viewFieldColor = 0xccffff77;
+    public final Paint viewFieldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     // ++++++++++++++++++++++++++++++
     // BEWEGUNG ++++++++++++++++++++++++++++++++++++++++++++++++++++++
     protected float wayChangePerSec = 100;
@@ -32,9 +34,6 @@ public abstract class AbstractRobot implements Drawable {
     private Obstacle tempTouch, tempIntersect;
     private float dir, dirSin, dirCos;
 
-    // SICHTFELD ZEICHNEN &&&&&&&&&&&&&&&&&&&
-    public final int viewFieldColor = 0xccffff77;
-    public final Paint viewFieldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     // &&&&&&&&&&&&&&&&&&&&&&&&&&&&&
     public AbstractRobot(float x, float y, float dir, GameManager gm) {
         this.x = x;
@@ -132,17 +131,19 @@ public abstract class AbstractRobot implements Drawable {
         });
         //ray durch erste Sichtfeldbegrenzung
         float mRay = getGradientfromAngle(dir - fov / 2);
+        list.addFirst(new ObstacleDirBundle(null, dir - fov / 2, 0, 0, false));
+        list.addLast(new ObstacleDirBundle(null, dir + fov / 2, 0, 0, false));
 
-        float[][] returnArray = getFirstHitInRadius(mRay, list);
-        float[] aktBestBPunkt = returnArray[0];//berührt
-        float[] aktBestSPunkt = returnArray[1];//schneidet
+        float[][] returnArray;
+        float[] aktBestBPunkt = null;//berührt
+        float[] aktBestSPunkt = null;//schneidet
         float[] lastBestBPunkt;
         float[] lastBestSPunkt;
 
         Obstacle lastT;
         Obstacle lastI;
-        Obstacle aktT = tempTouch;
-        Obstacle aktI = tempIntersect;
+        Obstacle aktT = null;
+        Obstacle aktI = null;
         float lastAngel;
         float aktAngel = getAngle(mRay);
 
@@ -151,11 +152,9 @@ public abstract class AbstractRobot implements Drawable {
             lastI = aktI;
             lastBestBPunkt = aktBestBPunkt;
             lastBestSPunkt = aktBestSPunkt;
-            float pX = list.get(i).getPointX();
-            float pY = list.get(i).getPointY();
-            float m = getGradient(pX, pY);
             lastAngel = aktAngel;
-            aktAngel = getAngle(m);
+            aktAngel = list.get(i).getDir();
+            float m = getGradientfromAngle(aktAngel);
             returnArray = getFirstHitInRadius(m, list);
             aktBestBPunkt = returnArray[0];
             aktBestSPunkt = returnArray[1];
