@@ -89,7 +89,11 @@ public abstract class AbstractRobot implements Drawable {
         // Sichtfeldfarbverlauf an Winkel und Position anpassen
         RadialGradient gradient = new RadialGradient(x, y, viewfieldradius, new int[]{0xccffffff, 0x00000000}, null, Shader.TileMode.CLAMP);
         viewFieldPaint.setShader(gradient);
-        drawIntersectedField(c);
+
+        RectF rectF = new RectF(x - viewfieldradius, y - viewfieldradius, x + viewfieldradius, y + viewfieldradius);
+        c.drawArc(rectF, (float) Math.toDegrees(dir - fov / 2), (float) Math.toDegrees(dir + fov / 2), true, viewFieldPaint);
+
+//        drawIntersectedField(c);
     }
 
     private void drawCircSector(float angel1, float angel2, Canvas c) {
@@ -160,7 +164,7 @@ public abstract class AbstractRobot implements Drawable {
             aktBestSPunkt = returnArray[1];
             aktT = tempTouch;
             aktI = tempIntersect;
-            if(i == 0)
+            if (i == 0)
                 continue;
             if (lastI != null) {
                 if (lastI == aktI)
@@ -197,9 +201,10 @@ public abstract class AbstractRobot implements Drawable {
         float newDis;
         int whichCorner;
         for (ObstacleDirBundle odb : list) {
-            if (odb.getO() == obs)
+            if (odb.getO() == obs || odb.getO() == null)
                 continue;
             obs = odb.getO();
+
             if ((sPunkteList = rayHitsObstacleAt(mRay, obs)).size() != 0)
                 for (float[] sPunkt : sPunkteList) {
                     newDis = absDis(sPunkt[0], sPunkt[1]);
