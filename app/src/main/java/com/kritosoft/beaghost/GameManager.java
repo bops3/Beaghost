@@ -46,7 +46,7 @@ public class GameManager {
         Log.d("GameManager", "CustomDrawView created!");
         cdv.init(this);
         Log.d("GameManager", "CustomDrawView init finished.");
-//        background = prepareBackground();
+        background = prepareBackground();
 
         drawClock = new Clock(drawTPS, new Tickable() {
             @Override
@@ -182,9 +182,9 @@ public class GameManager {
     private void drawBackground(Canvas c) {
         // draw map background
         c.drawColor(col_b);
-        c.drawRect(0, 0, mapWidth, mapHeight, paint_mapBack);
+//        c.drawRect(0, 0, mapWidth, mapHeight, paint_mapBack);
         // draw pre-drawn background bitmap
-//        c.drawBitmap(background, 0, 0, null);
+        c.drawBitmap(background, 0, 0, null);
     }
 
     private Bitmap prepareBackground() {
