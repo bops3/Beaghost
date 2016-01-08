@@ -13,7 +13,7 @@ public class Robot extends SimpleRobot {
     // movement parameters!#############
     private float maxDCRPS = (float) Math.PI, minDCRPS = (float) Math.PI / 4; // border values for dcrps
     private int minNDCDM = 700, maxNDCDM = 1400; // next direction change delay milliseconds
-    private float minWCPS = 0f, maxWCPS = 0f; // way change per second (-> speed)
+    private float minWCPS = 30f, maxWCPS = 300f; // way change per second (-> speed)
     // automatisch erstellte Momentanwerte (aus Bereichen zufällig generiert)
     private float dirChangeRadiantsPerSec = 1f; // direction change radiants per second (dcrps)
 

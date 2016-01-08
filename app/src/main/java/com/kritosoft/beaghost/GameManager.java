@@ -182,9 +182,12 @@ public class GameManager {
     private void drawBackground(Canvas c) {
         // draw map background
         c.drawColor(col_b);
-//        c.drawRect(0, 0, mapWidth, mapHeight, paint_mapBack);
+        c.drawRect(0, 0, mapWidth, mapHeight, paint_mapBack);
+        for (Obstacle o : obstacles) {
+            o.draw(c);
+        }
         // draw pre-drawn background bitmap
-        c.drawBitmap(background, 0, 0, null);
+//        c.drawBitmap(background, 0, 0, null);
     }
 
     private Bitmap prepareBackground() {
