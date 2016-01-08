@@ -31,7 +31,7 @@ public class Robot extends SimpleRobot {
         return new Robot(x, y, dir, gm);
     }
 
-    public synchronized void tick(long delayMillis) {
+    public void tick(long delayMillis) {
         millisFromLastDirChange = System.currentTimeMillis() - lastDirChangeMillis;
         if (millisFromLastDirChange > nextDirChangeDelayMillis) {
             // Richtung (un andere Parameter) ändern

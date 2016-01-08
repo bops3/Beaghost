@@ -45,7 +45,7 @@ public abstract class SimpleRobot extends AbstractRobot {
     }
 
     @Override
-    public synchronized void draw(Canvas c) {
+    public void draw(Canvas c) {
         // Blöcke links und rechts
         // rechter Block
         drawPath.reset();

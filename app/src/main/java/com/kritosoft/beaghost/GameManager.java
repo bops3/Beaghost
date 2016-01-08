@@ -22,6 +22,7 @@ public class GameManager {
     public static final String DELIM = " ";
     public static final int drawTPS = 60, tickTPS = 60;
     int col_b = 0xff000000;
+    Bitmap background;
     private Clock drawClock, tickClock;
     private Obstacle[] obstacles;
     private Stack<Robot> robots = new Stack<>();
@@ -32,7 +33,6 @@ public class GameManager {
     private int mapWidth, mapHeight, offsetX, offsetY, offsetMaxX, offsetMaxY, offsetMinY = 0, offsetMinX = 0, screenX, screenY;
     private float scale;
     private Paint paint_mapBack = new Paint(Paint.ANTI_ALIAS_FLAG);
-    Bitmap background;
 
     {
         paint_mapBack.setColor(0xff111111);
@@ -168,11 +168,11 @@ public class GameManager {
 
         drawBackground(c);
         // draw objects
-        synchronized (this) {
-            for (Robot r : robots) {
-                r.draw(c);
-            }
+
+        for (Robot r : robots) {
+            r.draw(c);
         }
+
         return c;
     }
 

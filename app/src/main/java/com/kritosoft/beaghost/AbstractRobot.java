@@ -43,27 +43,27 @@ public abstract class AbstractRobot implements Drawable {
         this.gm = gm;
     }
 
-    public synchronized float getRadius() {
+    public float getRadius() {
         return radius;
     }
 
-    public synchronized float getX() {
+    public float getX() {
         return x;
     }
 
-    public synchronized float getY() {
+    public float getY() {
         return y;
     }
 
-    public synchronized float getDirCos() {
+    public float getDirCos() {
         return dirCos;
     }
 
-    public synchronized float getDirSin() {
+    public float getDirSin() {
         return dirSin;
     }
 
-    public synchronized float getDir() {
+    public float getDir() {
         return dir;
     }
 
@@ -77,7 +77,7 @@ public abstract class AbstractRobot implements Drawable {
 
 
     /**
-     * Must be SYNCHRONIZED with super.this!!!!!!!!
+     * Must be with super.this!!!!!!!!
      *
      * @param delayMillis
      */
@@ -87,11 +87,11 @@ public abstract class AbstractRobot implements Drawable {
 
     protected void drawViewField(float angleFrom, float angle, Canvas c) {
         // Sichtfeldfarbverlauf an Winkel und Position anpassen
-        RadialGradient gradient = new RadialGradient(x, y, viewfieldradius, new int[]{0xccffffff, 0x00000000}, null, Shader.TileMode.CLAMP);
+        RadialGradient gradient = new RadialGradient(x, y, viewfieldradius, new int[]{viewFieldColor, 0x00000000}, null, Shader.TileMode.CLAMP);
         viewFieldPaint.setShader(gradient);
 
         RectF rectF = new RectF(x - viewfieldradius, y - viewfieldradius, x + viewfieldradius, y + viewfieldradius);
-        c.drawArc(rectF, (float) Math.toDegrees(dir - fov / 2), (float) Math.toDegrees(dir + fov / 2), true, viewFieldPaint);
+        c.drawArc(rectF, (float) Math.toDegrees(dir - fov / 2), (float) Math.toDegrees(fov), true, viewFieldPaint);
 
 //        drawIntersectedField(c);
     }
@@ -264,7 +264,7 @@ public abstract class AbstractRobot implements Drawable {
             return -1;
     }
 
-    public synchronized boolean sees(Robot r) {
+    public boolean sees(Robot r) {
         float m = getGradient(r.getX(), r.getY());
         float angleToR = getAngle(m);
         //Liegt der Punkt im Sichtfeld
