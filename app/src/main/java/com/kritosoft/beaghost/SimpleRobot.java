@@ -36,6 +36,7 @@ public abstract class SimpleRobot extends AbstractRobot {
     // Entfernungen zu den Ecken der Boxen zum Zeichnen
     private float[] angleSins = new float[8], angleCosins = new float[8];
 
+    private boolean initOK = false;
     public SimpleRobot(float x, float y, float dir, GameManager gm, int bodyColor) {
         super(x, y, dir, gm);
         // colors
@@ -83,7 +84,10 @@ public abstract class SimpleRobot extends AbstractRobot {
         // Werte für Boxen an den Seiten an Winkel anpassen
         for (int i = 0; i < angles.length; i++) {
             float actangle = getDir() + angles[i];
-            actangle %= 2 * pi;
+            actangle %= 2 * pi;if(!initOK){
+                initOK=true;
+            angleSins = new float[8];
+            angleCosins = new float[8];}
             angleSins[i] = (float) Math.sin(actangle);
             angleCosins[i] = (float) Math.cos(actangle);
         }
