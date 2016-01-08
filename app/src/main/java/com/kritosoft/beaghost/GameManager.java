@@ -187,7 +187,7 @@ public class GameManager {
             o.draw(c);
         }
         // draw pre-drawn background bitmap
-//        c.drawBitmap(background, 0, 0, null);
+        c.drawBitmap(background, 0, 0, null);
     }
 
     private Bitmap prepareBackground() {
