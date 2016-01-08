@@ -87,7 +87,7 @@ public abstract class AbstractRobot implements Drawable {
 
     protected void drawViewField(float angleFrom, float angle, Canvas c) {
         // Sichtfeldfarbverlauf an Winkel und Position anpassen
-        RadialGradient gradient = new RadialGradient(x, y, viewfieldradius, new int[]{viewFieldColor, 0x00000000}, null, Shader.TileMode.CLAMP);
+        RadialGradient gradient = new RadialGradient(x, y, viewfieldradius, new int[]{viewFieldColor, viewFieldColor & 0x00111111}, null, Shader.TileMode.CLAMP);
         viewFieldPaint.setShader(gradient);
 
         RectF rectF = new RectF(x - viewfieldradius, y - viewfieldradius, x + viewfieldradius, y + viewfieldradius);

@@ -41,9 +41,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d("MainActivity", "resume");
-        if (stopped) {
-            stopped = false;
-            gm.startTicking();
-        }
+//        if (stopped) {
+//            stopped = false;
+//            gm.startTicking();
+//        }
     }
 }
