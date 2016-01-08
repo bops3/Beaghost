@@ -16,14 +16,13 @@ public abstract class AbstractRobot implements Drawable {
     // Sichtfeld
     public final float viewfieldradius = 400f;
     // ++++++++++++++++++++++++++++++
-
-    //### temp vars #######
-    private float tempAngle;
-
     // BEWEGUNG ++++++++++++++++++++++++++++++++++++++++++++++++++++++
     protected float wayChangePerSec = 100;
     protected float x, y;
     protected GameManager gm;
+    //### temp vars #######
+    private float tempAngle;
+    private Obstacle tempTouch, tempIntersect;
     private float dir, dirSin, dirCos;
 
     public AbstractRobot(float x, float y, float dir, GameManager gm) {
@@ -76,18 +75,26 @@ public abstract class AbstractRobot implements Drawable {
 
     public abstract void draw(Canvas c);
 
+    private void drawCircSector(float angel1, float angel2) {
+
+    }
+
+    private void drawTrinangle(float x0, float y0, float x1, float y1) {
+
+    }
+
 
     private void drawIntersectedField() {
         LinkedList<ObstacleDirBundle> list = new LinkedList<>();
         for (Obstacle o : gm.getObstacles()) {
             if (isInView(o.x, o.y))
-                list.add(new ObstacleDirBundle(o, tempAngle, o.x, o.y));
+                list.add(new ObstacleDirBundle(o, tempAngle, o.x, o.y, isTouchAngle(tempAngle, 0)));
             if (isInView(o.x + o.width, o.y))
-                list.add(new ObstacleDirBundle(o, tempAngle, o.x + o.width, o.y));
+                list.add(new ObstacleDirBundle(o, tempAngle, o.x + o.width, o.y, isTouchAngle(tempAngle, 1)));
             if (isInView(o.x, o.y + o.height))
-                list.add(new ObstacleDirBundle(o, tempAngle, o.x, o.y + o.height));
+                list.add(new ObstacleDirBundle(o, tempAngle, o.x, o.y + o.height, isTouchAngle(tempAngle, 2)));
             if (isInView(o.x + o.width, o.y + o.height))
-                list.add(new ObstacleDirBundle(o, tempAngle, o.x + o.width, o.y + o.height));
+                list.add(new ObstacleDirBundle(o, tempAngle, o.x + o.width, o.y + o.height, isTouchAngle(tempAngle, 3)));
 
         }
         Collections.sort(list, new Comparator<ObstacleDirBundle>() {
@@ -98,40 +105,133 @@ public abstract class AbstractRobot implements Drawable {
         });
         //ray durch erste Sichtfeldbegrenzung
         float mRay = getGradientfromAngle(dir - fov / 2);
-        getFirstHitInRadius(mRay, list);
 
-        for (ObstacleDirBundle odb : list) {
-            float pX = odb.getPointX();
-            float pY = odb.getPointY();
+        float[][] returnArray = getFirstHitInRadius(mRay, list);
+        float[] aktBestBPunkt = returnArray[0];//berührt
+        float[] aktBestSPunkt = returnArray[1];//schneidet
+        float[] lastBestBPunkt;
+        float[] lastBestSPunkt;
+
+        Obstacle lastT = null;
+        Obstacle lastI = null;
+        Obstacle aktT = tempTouch;
+        Obstacle aktI = tempIntersect;
+        float lastAngel;
+        float aktAngel = getAngle(mRay);
+
+        for (int i = 0; i < list.size(); i++) {
+            lastT = aktT;
+            lastI = aktI;
+            lastBestBPunkt = aktBestBPunkt;
+            lastBestSPunkt = aktBestSPunkt;
+            float pX = list.get(i).getPointX();
+            float pY = list.get(i).getPointY();
             float m = getGradient(pX, pY);
+            lastAngel = aktAngel;
+            aktAngel = getAngle(m);
+            returnArray = getFirstHitInRadius(m, list);
+            aktBestBPunkt = returnArray[0];
+            aktBestSPunkt = returnArray[1];
+            aktT = tempTouch;
+            aktI = tempIntersect;
+            if (lastI != null) {
+                if (lastI == aktI)
+                    //zweimal schneiden
+                    drawTrinangle(lastBestSPunkt[0], lastBestSPunkt[1], aktBestSPunkt[0], aktBestSPunkt[1]);
+                else if(aktI == null)
+                    //intersect, dann touch
+                    drawTrinangle(lastBestSPunkt[0], lastBestSPunkt[1], aktBestBPunkt[0], aktBestBPunkt[1]);
+
+            } else if (lastT != null){
+                if (aktI == null)
+                    //nur touch
+                    drawCircSector(lastAngel, aktAngel);
+                else
+                //touch, dann intersect
+                    drawTrinangle(lastBestBPunkt[0], lastBestBPunkt[1], aktBestSPunkt[0], aktBestSPunkt[1]);
+            }
             //ray tracen, wenn hit in bereich dann dreieck, sonst bogen
         }
 
     }
 
-    private void getFirstHitInRadius(float mRay, LinkedList<ObstacleDirBundle> list) {
+    private float[][] getFirstHitInRadius(float mRay, LinkedList<ObstacleDirBundle> list) {
         Obstacle obs = null;
         LinkedList<float[]> sPunkteList;
-        float[] bestSPunkt = null;
-        boolean rayHitsST = false;
-        boolean rayHits2T = false;
+        float[] bestBPunkt = null;//berührt
+        float[] bestSPunkt = null;//schneidet
+        tempIntersect = null;
+        tempTouch = null;
+//        boolean rayHitsST = false;
+//        boolean rayHits2T = false;
         float smallestDis = viewfieldradius;
+        float smallestDisB = viewfieldradius;
         float newDis;
+        int whichCorner;
         for (ObstacleDirBundle odb : list) {
             if (odb.getO() == obs)
                 continue;
             obs = odb.getO();
             if ((sPunkteList = rayHitsObstacleAt(mRay, obs)).size() != 0)
-                for (float[] sPunkt : sPunkteList)
-                    if ((newDis = absDis(sPunkt[0], sPunkt[1])) < smallestDis) {
-                        smallestDis = newDis;
-                        bestSPunkt = sPunkt;
-                        if (rayHitsST)
-                            rayHits2T = true;
-                        else
-                            rayHitsST = true;
+                for (float[] sPunkt : sPunkteList) {
+                    newDis = absDis(sPunkt[0], sPunkt[1]);
+                    if ((whichCorner = whichCornerPoint(obs, sPunkt[0], sPunkt[1])) != -1 && isTouchAngle(getAngle(mRay), whichCorner)) {
+                        if (newDis < smallestDisB && newDis < smallestDis) {
+                            smallestDisB = newDis;
+                            bestBPunkt = sPunkt;
+                            tempTouch = obs;
+                        }
+                    } else {
+//                        if (newDis < viewfieldradius && rayHitsST)
+//                            rayHits2T = true;
+                        if (newDis < smallestDis) {
+                            smallestDis = newDis;
+                            bestSPunkt = sPunkt;
+                            tempIntersect = obs;
+                            if (newDis < smallestDisB) {
+                                smallestDisB = newDis;
+                                bestBPunkt = null;
+                                tempTouch = null;
+                            }
+//                            rayHitsST = true;
+                        }
                     }
+                }
         }
+        return new float[][]{bestBPunkt, bestSPunkt};
+    }
+
+    private boolean isTouchAngle(float angle, int whichCorner) {
+        switch (whichCorner) {
+            case 0:
+            case 3:
+                return (angle > 0 && angle < 0.5 * pi) || (angle > pi & angle < 1.5 * pi);
+            default:
+                return (angle > 0.5 * pi && angle < pi) || (angle > 1.5 * pi & angle < 2 * pi);
+        }
+    }
+
+    /**
+     * @param o
+     * @param x
+     * @param y
+     * @return -1: no corner, 0 top-left, 1 top-right, 2 bot-left, 3 bot-right
+     */
+    private int whichCornerPoint(Obstacle o, float x, float y) {
+        int ret;
+        if (y == o.y)
+            ret = 0;
+        else if (y == o.y + o.height)
+            ret = 2;
+        else
+            return -1;
+
+        if (x == o.x + o.width)
+            return ret & 1;
+        else if (x == o.x)
+            return ret;
+        else
+            return -1;
     }
 
     public synchronized boolean sees(Robot r) {
@@ -221,7 +321,7 @@ public abstract class AbstractRobot implements Drawable {
     }
 
     private boolean sHLC(float sx, float xB, float widthB) {
-        return sx > xB && sx < xB + widthB;
+        return sx >= xB && sx <= xB + widthB;
     }
 
     private float sHLCAt(float gradientA, float yB) {
@@ -245,7 +345,7 @@ public abstract class AbstractRobot implements Drawable {
     }
 
     private boolean sVLC(float sy, float yB, float heightB) {
-        return sy > yB && sy < yB + heightB;
+        return sy >= yB && sy <= yB + heightB;
     }
 
     private float sVLCAt(float gradientA, float xB) {
