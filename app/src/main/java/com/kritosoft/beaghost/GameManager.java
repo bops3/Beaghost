@@ -160,8 +160,10 @@ public class GameManager {
         c.translate(offsetX, offsetY);
 //        Log.v("GameManager", "offset:" + offsetX + "," + offsetY);
 
+        // draw map background
         c.drawColor(col_b);
         c.drawRect(0, 0, mapSizeX, mapSizeY, paint_mapBack);
+        // draw objects
         synchronized (this) {
             for (Obstacle o : obstacles) {
                 o.draw(c);
