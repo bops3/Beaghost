@@ -96,10 +96,10 @@ public abstract class AbstractRobot implements Drawable {
 //        drawIntersectedField(c);
     }
 
-    private void drawCircSector(float angel1, float angel2, Canvas c) {
+    private void drawCircSector(float angleStart, float angleEnd, Canvas c) {
 
         RectF rectF = new RectF(x - viewfieldradius, y - viewfieldradius, x + viewfieldradius, y + viewfieldradius);
-        c.drawArc(rectF, (float) Math.toDegrees(angel1), (float) Math.toDegrees(angel2), true, viewFieldPaint);
+        c.drawArc(rectF, (float) Math.toDegrees(angleStart), (float) Math.toDegrees(angleEnd-angleStart), true, viewFieldPaint);
     }
 
     private void drawTrinangle(float x0, float y0, float x1, float y1, Canvas c) {
