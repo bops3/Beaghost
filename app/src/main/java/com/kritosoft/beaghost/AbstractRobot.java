@@ -6,6 +6,7 @@ import android.graphics.Path;
 import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.util.Log;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -99,7 +100,7 @@ public abstract class AbstractRobot implements Drawable {
     private void drawCircSector(float angleStart, float angleEnd, Canvas c) {
 
         RectF rectF = new RectF(x - viewfieldradius, y - viewfieldradius, x + viewfieldradius, y + viewfieldradius);
-        c.drawArc(rectF, (float) Math.toDegrees(angleStart), (float) Math.toDegrees(angleEnd-angleStart), true, viewFieldPaint);
+        c.drawArc(rectF, (float) Math.toDegrees(angleStart), (float) Math.toDegrees(angleStart - angleEnd), true, viewFieldPaint);
     }
 
     private void drawTrinangle(float x0, float y0, float x1, float y1, Canvas c) {
@@ -127,6 +128,7 @@ public abstract class AbstractRobot implements Drawable {
                 list.add(new ObstacleDirBundle(o, tempAngle, o.x + o.width, o.y + o.height, isTouchAngle(tempAngle, 3)));
 
         }
+//        Log.v("Robot","list.size(): "+list.size());
         Collections.sort(list, new Comparator<ObstacleDirBundle>() {
             @Override
             public int compare(ObstacleDirBundle lhs, ObstacleDirBundle rhs) {
@@ -148,18 +150,18 @@ public abstract class AbstractRobot implements Drawable {
         Obstacle lastI;
         Obstacle aktT = null;
         Obstacle aktI = null;
-        float lastAngel;
-        float aktAngel = getAngle(mRay);
+        float lastAngle;
+        float aktAngle = 0;
 
         for (int i = 0; i < list.size(); i++) {
             lastT = aktT;
             lastI = aktI;
             lastBestBPunkt = aktBestBPunkt;
             lastBestSPunkt = aktBestSPunkt;
-            lastAngel = aktAngel;
-            aktAngel = list.get(i).getDir();
-            float m = getGradientfromAngle(aktAngel);
-            returnArray = getFirstHitInRadius(m, list);
+            lastAngle = aktAngle;
+            aktAngle = list.get(i).getDir();
+            float m = getGradientfromAngle(aktAngle);
+            returnArray = getFirstHitInRadius(m, list, list.get(i));
             aktBestBPunkt = returnArray[0];
             aktBestSPunkt = returnArray[1];
             aktT = tempTouch;
@@ -170,24 +172,26 @@ public abstract class AbstractRobot implements Drawable {
                 if (lastI == aktI)
                     //zweimal schneiden
                     drawTrinangle(lastBestSPunkt[0], lastBestSPunkt[1], aktBestSPunkt[0], aktBestSPunkt[1], c);
-                else if (aktI == null)
+                else if (aktI == null && aktT != null)
                     //intersect, dann touch
                     drawTrinangle(lastBestSPunkt[0], lastBestSPunkt[1], aktBestBPunkt[0], aktBestBPunkt[1], c);
 
             } else if (lastT != null) {
                 if (aktI == null)
                     //nur touch
-                    drawCircSector(lastAngel, aktAngel, c);
+                    drawCircSector(lastAngle, aktAngle, c);
                 else
                     //touch, dann intersect
                     drawTrinangle(lastBestBPunkt[0], lastBestBPunkt[1], aktBestSPunkt[0], aktBestSPunkt[1], c);
             }
+//                if(aktI == null && aktT == null)
+//                    drawCircSector(lastAngle, aktAngle, c);
             //ray tracen, wenn hit in bereich dann dreieck, sonst bogen
         }
 
     }
 
-    private float[][] getFirstHitInRadius(float mRay, LinkedList<ObstacleDirBundle> list) {
+    private float[][] getFirstHitInRadius(float mRay, LinkedList<ObstacleDirBundle> list, ObstacleDirBundle bundleHit) {
         Obstacle obs = null;
         LinkedList<float[]> sPunkteList;
         float[] bestBPunkt = null;//berührt
@@ -231,6 +235,14 @@ public abstract class AbstractRobot implements Drawable {
                     }
                 }
         }
+        float x = bundleHit.getPointX();
+        float y = bundleHit.getPointY();
+        float dis = absDis(x, y);
+        if (bestBPunkt == null || dis <= smallestDisB) {
+            bestBPunkt = new float[]{x, y};
+            tempTouch = bundleHit.getO();
+        }
+        Log.v("Robot", "bestBPunkt,/S: " + bestBPunkt + " | " + bestSPunkt);
         return new float[][]{bestBPunkt, bestSPunkt};
     }
 
@@ -289,20 +301,22 @@ public abstract class AbstractRobot implements Drawable {
 
         float sx = sHLCAt(mRay, o.y - y);
         if (sHLC(sx, o.x - x, o.width))
-            list.add(new float[]{sx, o.y - y});
+            list.add(new float[]{sx + x, o.y});
 
         sx = sHLCAt(mRay, o.y + o.height - y);
         if (sHLC(sx, o.x - x, o.width))
-            list.add(new float[]{sx, o.y + o.height - y});
+            list.add(new float[]{sx + x, o.y + o.height});
 
         float sy = sVLCAt(mRay, o.x - x);
         if (sVLC(sy, o.y - y, o.height))
-            list.add(new float[]{o.x - x, sy});
+            list.add(new float[]{o.x, sy + y});
 
         sy = sVLCAt(mRay, o.x + o.width - x);
         if (sVLC(sy, o.y - y, o.height))
-            list.add(new float[]{o.x + o.width - x, sy});
-
+            list.add(new float[]{o.x + o.width, sy + y});
+        if (list.size() > 0)
+            for (float[] f : list)
+                Log.v("Robot", "Schnittpunkte: (" + f[0] + ", " + f[1] + ")");
         return list;
     }
 
