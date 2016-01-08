@@ -1,8 +1,11 @@
 package com.kritosoft.beaghost;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -26,9 +29,10 @@ public class GameManager {
     private CustomDrawView cdv;
     //offset and mapsize are measured in the same unit.
     //screenSize unit is different!(depends on scale)
-    private int mapSizeX, mapSizeY, offsetX, offsetY, offsetMaxX, offsetMaxY, offsetMinY = 0, offsetMinX = 0, screenX, screenY;
+    private int mapWidth, mapHeight, offsetX, offsetY, offsetMaxX, offsetMaxY, offsetMinY = 0, offsetMinX = 0, screenX, screenY;
     private float scale;
     private Paint paint_mapBack = new Paint(Paint.ANTI_ALIAS_FLAG);
+    Bitmap background;
 
     {
         paint_mapBack.setColor(0xff111111);
@@ -37,11 +41,12 @@ public class GameManager {
     public GameManager(Context context) {
         this.context = context;
         genMapFromFile(R.raw.map1);
-        Log.d("GameManager", "creating...");
+        Log.d("GameManager", "creating CustomDrawView...");
         cdv = new CustomDrawView(context);
         Log.d("GameManager", "CustomDrawView created!");
         cdv.init(this);
         Log.d("GameManager", "CustomDrawView init finished.");
+        background = prepareBackground();
 
         drawClock = new Clock(drawTPS, new Tickable() {
             @Override
@@ -64,9 +69,9 @@ public class GameManager {
         Scanner reader = new Scanner(isr);
         int anzObstacles, i = 0;
 
-        mapSizeX = Integer.parseInt(reader.next());
-        mapSizeY = Integer.parseInt(reader.next());
-        Log.d("GameManager", "Map size: " + mapSizeX + ", " + mapSizeY);
+        mapWidth = Integer.parseInt(reader.next());
+        mapHeight = Integer.parseInt(reader.next());
+        Log.d("GameManager", "Map size: " + mapWidth + ", " + mapHeight);
         String anzOStr = reader.next().trim();
         anzObstacles = Integer.parseInt(anzOStr);
 
@@ -83,7 +88,7 @@ public class GameManager {
                     robots.add(Robot.createFromFile(reader.nextLine(), this));
                     break;
                 default:
-                    Log.e("GameManager", "Unknown Type: " + type);
+                    reader.nextLine();
             }
         }
 
@@ -123,14 +128,15 @@ public class GameManager {
 
     }
 
-    public int getMapSizeX() {
-        return mapSizeX;
+    public int getMapWidth() {
+        return mapWidth;
     }
 
-    public int getMapSizeY() {
-        return mapSizeY;
+    public int getMapHeight() {
+        return mapHeight;
     }
-    public Obstacle[] getObstacles(){
+
+    public Obstacle[] getObstacles() {
         return obstacles;
     }
 
@@ -160,19 +166,40 @@ public class GameManager {
         c.translate(offsetX, offsetY);
 //        Log.v("GameManager", "offset:" + offsetX + "," + offsetY);
 
-        // draw map background
-        c.drawColor(col_b);
-        c.drawRect(0, 0, mapSizeX, mapSizeY, paint_mapBack);
+        drawBackground(c);
         // draw objects
         synchronized (this) {
-            for (Obstacle o : obstacles) {
-                o.draw(c);
-            }
             for (Robot r : robots) {
                 r.draw(c);
             }
         }
         return c;
+    }
+
+    private void drawBackground(Canvas c) {
+        // draw map background
+        c.drawColor(col_b);
+//      c.drawRect(0, 0, mapWidth, mapHeight, paint_mapBack);
+        // draw pre-drawn background bitmap
+        c.drawBitmap(background, 0, 0, null);
+    }
+
+    private Bitmap prepareBackground() {
+        Bitmap bgBmp = BitmapFactory.decodeStream(context.getResources().openRawResource(R.raw.background));
+        Bitmap out = Bitmap.createBitmap(mapWidth, mapHeight, Bitmap.Config.ARGB_8888);
+        // TODO Konstante für Größe der einzelnen Hintergrundfragmente!!
+        int textureWidth = bgBmp.getWidth(), textureHeight = bgBmp.getHeight();
+        Canvas c = new Canvas(out);
+        for (int x = 0; x < mapWidth; x += textureWidth) {
+            for (int y = 0; y < mapHeight; y += textureHeight) {
+                Rect r = new Rect(x, y, x + textureHeight, y + textureHeight);
+                c.drawBitmap(bgBmp, null, r, paint_mapBack);
+            }
+        }
+        for (Obstacle o : obstacles) {
+            o.draw(c);
+        }
+        return out;
     }
 
     public boolean isFree(float xW, float yW, Robot i) {
@@ -196,12 +223,12 @@ public class GameManager {
         screenX = width;
         screenY = height;
         setMaxOffset();
-        Log.d("GameManager", "screen (" + screenX + ", " + screenY + "), map (" + mapSizeX + ", " + mapSizeY + ")");
-        cdv.setMinScale(Math.min(1f*screenX / mapSizeX, 1f*screenY / mapSizeY));
+        Log.d("GameManager", "screen (" + screenX + ", " + screenY + "), map (" + mapWidth + ", " + mapHeight + ")");
+        cdv.setMinScale(Math.min(1f * screenX / mapWidth, 1f * screenY / mapHeight));
     }
 
     private void setMaxOffset() {
-        offsetMaxX = -(Math.max(mapSizeX - Math.round(screenX / scale), 0));
-        offsetMaxY = -(Math.max(mapSizeY - Math.round(screenY / scale), 0));
+        offsetMaxX = -(Math.max(mapWidth - Math.round(screenX / scale), 0));
+        offsetMaxY = -(Math.max(mapHeight - Math.round(screenY / scale), 0));
     }
 }

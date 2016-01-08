@@ -32,6 +32,10 @@ public abstract class AbstractRobot implements Drawable {
     private Obstacle tempTouch, tempIntersect;
     private float dir, dirSin, dirCos;
 
+    // SICHTFELD ZEICHNEN &&&&&&&&&&&&&&&&&&&
+    public final int viewFieldColor = 0xccffff77;
+    public final Paint viewFieldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    // &&&&&&&&&&&&&&&&&&&&&&&&&&&&&
     public AbstractRobot(float x, float y, float dir, GameManager gm) {
         this.x = x;
         this.y = y;
