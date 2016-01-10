@@ -14,7 +14,7 @@ public class Obstacle implements Drawable {
     public static final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     static {
-        paint.setColor(0xff000000);
+        paint.setColor(0xffffffff);
     }
 
     private GameManager gm;
@@ -36,6 +36,7 @@ public class Obstacle implements Drawable {
         y = Float.parseFloat(sc.next());
         width = Float.parseFloat(sc.next());
         height = Float.parseFloat(sc.next());
+        sc.close();
         Log.d("Obstacle", "Obstacle erstellt: " + x + ", " + y + " | " + width + ", " + height);
         return new Obstacle(x, y, width, height, gm);
     }

@@ -36,6 +36,7 @@ public class GameManager {
 
     {
         paint_mapBack.setColor(0xffcccccc);
+        paint_mapBack.setAntiAlias(true);
     }
 
     public GameManager(Context context) {
@@ -91,6 +92,7 @@ public class GameManager {
                     reader.nextLine();
             }
         }
+        reader.close();
 
     }
 
@@ -194,11 +196,12 @@ public class GameManager {
         Bitmap bgBmp = BitmapFactory.decodeStream(context.getResources().openRawResource(R.raw.background));
         Bitmap out = Bitmap.createBitmap(mapWidth, mapHeight, Bitmap.Config.ARGB_8888);
         // TODO Konstante für Größe der einzelnen Hintergrundfragmente!!
-        int textureWidth = bgBmp.getWidth(), textureHeight = bgBmp.getHeight();
+        int textureWidth = bgBmp.getWidth()/4, textureHeight = bgBmp.getHeight()/4;
+        Log.d("GameManager", "texture size: (" + textureWidth + ", " + textureHeight + ")");
         Canvas c = new Canvas(out);
         for (int x = 0; x < mapWidth; x += textureWidth) {
             for (int y = 0; y < mapHeight; y += textureHeight) {
-                Rect r = new Rect(x, y, x + textureHeight, y + textureHeight);
+                Rect r = new Rect(x, y, x + textureWidth, y + textureHeight);
                 c.drawBitmap(bgBmp, null, r, paint_mapBack);
             }
         }
